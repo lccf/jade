@@ -1,14 +1,14 @@
-!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.jade=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jade = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var nodes = _dereq_('./nodes');
-var filters = _dereq_('./filters');
-var doctypes = _dereq_('./doctypes');
-var runtime = _dereq_('./runtime');
-var utils = _dereq_('./utils');
-var selfClosing = _dereq_('./self-closing');
-var parseJSExpression = _dereq_('character-parser').parseMax;
-var constantinople = _dereq_('constantinople');
+var nodes = require('./nodes');
+var filters = require('./filters');
+var doctypes = require('./doctypes');
+var runtime = require('./runtime');
+var utils = require('./utils');
+var selfClosing = require('./self-closing');
+var parseJSExpression = require('character-parser').parseMax;
+var constantinople = require('constantinople');
 
 function isConstant(src) {
   return constantinople(src, {jade: runtime, 'jade_interp': undefined});
@@ -654,6 +654,11 @@ Compiler.prototype = {
       if (key === 'class') {
         classes.push(attr.val);
         classEscaping.push(attr.escaped);
+      } else if (key === 'bem') {
+        bemClass = bem.parse(this.indents, attr.val);
+        if (bemClass) {
+          classes.push(bemClass);
+        }
       } else if (isConstant(attr.val)) {
         if (buffer) {
           this.buffer(runtime.attr(key, toConstant(attr.val), escaped, this.terse));
@@ -703,7 +708,7 @@ Compiler.prototype = {
   }
 };
 
-},{"./doctypes":2,"./filters":3,"./nodes":16,"./runtime":24,"./self-closing":25,"./utils":26,"character-parser":33,"constantinople":34}],2:[function(_dereq_,module,exports){
+},{"./doctypes":2,"./filters":3,"./nodes":16,"./runtime":24,"./self-closing":25,"./utils":26,"character-parser":33,"constantinople":34}],2:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -716,7 +721,7 @@ module.exports = {
   , 'basic': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">'
   , 'mobile': '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
 };
-},{}],3:[function(_dereq_,module,exports){
+},{}],3:[function(require,module,exports){
 'use strict';
 
 module.exports = filter;
@@ -729,7 +734,7 @@ function filter(name, str, options) {
   return res;
 }
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 module.exports = [
@@ -753,7 +758,7 @@ module.exports = [
   , 'sub'
   , 'sup'
 ];
-},{}],5:[function(_dereq_,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 /*!
@@ -766,36 +771,36 @@ module.exports = [
  * Module dependencies.
  */
 
-var Parser = _dereq_('./parser')
-  , Lexer = _dereq_('./lexer')
-  , Compiler = _dereq_('./compiler')
-  , runtime = _dereq_('./runtime')
-  , addWith = _dereq_('with')
-  , fs = _dereq_('fs');
+var Parser = require('./parser')
+  , Lexer = require('./lexer')
+  , Compiler = require('./compiler')
+  , runtime = require('./runtime')
+  , addWith = require('with')
+  , fs = require('fs');
 
 /**
  * Expose self closing tags.
  */
 
-exports.selfClosing = _dereq_('./self-closing');
+exports.selfClosing = require('./self-closing');
 
 /**
  * Default supported doctypes.
  */
 
-exports.doctypes = _dereq_('./doctypes');
+exports.doctypes = require('./doctypes');
 
 /**
  * Text filters.
  */
 
-exports.filters = _dereq_('./filters');
+exports.filters = require('./filters');
 
 /**
  * Utilities.
  */
 
-exports.utils = _dereq_('./utils');
+exports.utils = require('./utils');
 
 /**
  * Expose `Compiler`.
@@ -819,7 +824,7 @@ exports.Lexer = Lexer;
  * Nodes.
  */
 
-exports.nodes = _dereq_('./nodes');
+exports.nodes = require('./nodes');
 
 /**
  * Jade runtime helpers.
@@ -1090,11 +1095,11 @@ exports.compileFileClient = function(path, options){
 
 exports.__express = exports.renderFile;
 
-},{"./compiler":1,"./doctypes":2,"./filters":3,"./lexer":6,"./nodes":16,"./parser":23,"./runtime":24,"./self-closing":25,"./utils":26,"fs":27,"with":46}],6:[function(_dereq_,module,exports){
+},{"./compiler":1,"./doctypes":2,"./filters":3,"./lexer":6,"./nodes":16,"./parser":23,"./runtime":24,"./self-closing":25,"./utils":26,"fs":27,"with":46}],6:[function(require,module,exports){
 'use strict';
 
-var utils = _dereq_('./utils');
-var characterParser = _dereq_('character-parser');
+var utils = require('./utils');
+var characterParser = require('character-parser');
 
 
 /**
@@ -1969,10 +1974,10 @@ Lexer.prototype = {
   }
 };
 
-},{"./utils":26,"character-parser":33}],7:[function(_dereq_,module,exports){
+},{"./utils":26,"character-parser":33}],7:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a `Attrs` node.
@@ -2054,10 +2059,10 @@ Attrs.prototype.addAttributes = function (src) {
   this.attributeBlocks.push(src);
 };
 
-},{"./node":20}],8:[function(_dereq_,module,exports){
+},{"./node":20}],8:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a `BlockComment` with the given `block`.
@@ -2080,10 +2085,10 @@ BlockComment.prototype.constructor = BlockComment;
 
 BlockComment.prototype.type = 'BlockComment';
 
-},{"./node":20}],9:[function(_dereq_,module,exports){
+},{"./node":20}],9:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a new `Block` with an optional `node`.
@@ -2200,10 +2205,10 @@ Block.prototype.clone = function(){
   return clone;
 };
 
-},{"./node":20}],10:[function(_dereq_,module,exports){
+},{"./node":20}],10:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a new `Case` with `expr`.
@@ -2235,10 +2240,10 @@ When.prototype.constructor = When;
 
 When.prototype.type = 'When';
 
-},{"./node":20}],11:[function(_dereq_,module,exports){
+},{"./node":20}],11:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a `Code` node with the given code `val`.
@@ -2262,10 +2267,10 @@ Code.prototype = Object.create(Node.prototype);
 Code.prototype.constructor = Code;
 
 Code.prototype.type = 'Code'; // prevent the minifiers removing this
-},{"./node":20}],12:[function(_dereq_,module,exports){
+},{"./node":20}],12:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a `Comment` with the given `val`, optionally `buffer`,
@@ -2287,10 +2292,10 @@ Comment.prototype.constructor = Comment;
 
 Comment.prototype.type = 'Comment';
 
-},{"./node":20}],13:[function(_dereq_,module,exports){
+},{"./node":20}],13:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a `Doctype` with the given `val`. 
@@ -2309,10 +2314,10 @@ Doctype.prototype.constructor = Doctype;
 
 Doctype.prototype.type = 'Doctype';
 
-},{"./node":20}],14:[function(_dereq_,module,exports){
+},{"./node":20}],14:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize an `Each` node, representing iteration
@@ -2337,10 +2342,10 @@ Each.prototype.constructor = Each;
 
 Each.prototype.type = 'Each';
 
-},{"./node":20}],15:[function(_dereq_,module,exports){
+},{"./node":20}],15:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a `Filter` node with the given
@@ -2363,28 +2368,28 @@ Filter.prototype.constructor = Filter;
 
 Filter.prototype.type = 'Filter';
 
-},{"./node":20}],16:[function(_dereq_,module,exports){
+},{"./node":20}],16:[function(require,module,exports){
 'use strict';
 
-exports.Node = _dereq_('./node');
-exports.Tag = _dereq_('./tag');
-exports.Code = _dereq_('./code');
-exports.Each = _dereq_('./each');
-exports.Case = _dereq_('./case');
-exports.Text = _dereq_('./text');
-exports.Block = _dereq_('./block');
-exports.MixinBlock = _dereq_('./mixin-block');
-exports.Mixin = _dereq_('./mixin');
-exports.Filter = _dereq_('./filter');
-exports.Comment = _dereq_('./comment');
-exports.Literal = _dereq_('./literal');
-exports.BlockComment = _dereq_('./block-comment');
-exports.Doctype = _dereq_('./doctype');
+exports.Node = require('./node');
+exports.Tag = require('./tag');
+exports.Code = require('./code');
+exports.Each = require('./each');
+exports.Case = require('./case');
+exports.Text = require('./text');
+exports.Block = require('./block');
+exports.MixinBlock = require('./mixin-block');
+exports.Mixin = require('./mixin');
+exports.Filter = require('./filter');
+exports.Comment = require('./comment');
+exports.Literal = require('./literal');
+exports.BlockComment = require('./block-comment');
+exports.Doctype = require('./doctype');
 
-},{"./block":9,"./block-comment":8,"./case":10,"./code":11,"./comment":12,"./doctype":13,"./each":14,"./filter":15,"./literal":17,"./mixin":19,"./mixin-block":18,"./node":20,"./tag":21,"./text":22}],17:[function(_dereq_,module,exports){
+},{"./block":9,"./block-comment":8,"./case":10,"./code":11,"./comment":12,"./doctype":13,"./each":14,"./filter":15,"./literal":17,"./mixin":19,"./mixin-block":18,"./node":20,"./tag":21,"./text":22}],17:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a `Literal` node with the given `str.
@@ -2403,10 +2408,10 @@ Literal.prototype.constructor = Literal;
 
 Literal.prototype.type = 'Literal';
 
-},{"./node":20}],18:[function(_dereq_,module,exports){
+},{"./node":20}],18:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a new `Block` with an optional `node`.
@@ -2423,10 +2428,10 @@ MixinBlock.prototype.constructor = MixinBlock;
 
 MixinBlock.prototype.type = 'MixinBlock';
 
-},{"./node":20}],19:[function(_dereq_,module,exports){
+},{"./node":20}],19:[function(require,module,exports){
 'use strict';
 
-var Attrs = _dereq_('./attrs');
+var Attrs = require('./attrs');
 
 /**
  * Initialize a new `Mixin` with `name` and `block`.
@@ -2451,7 +2456,7 @@ Mixin.prototype.constructor = Mixin;
 
 Mixin.prototype.type = 'Mixin';
 
-},{"./attrs":7}],20:[function(_dereq_,module,exports){
+},{"./attrs":7}],20:[function(require,module,exports){
 'use strict';
 
 var Node = module.exports = function Node(){};
@@ -2471,12 +2476,12 @@ Node.prototype.clone = function(){
 
 Node.prototype.type = '';
 
-},{}],21:[function(_dereq_,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
-var Attrs = _dereq_('./attrs');
-var Block = _dereq_('./block');
-var inlineTags = _dereq_('../inline-tags');
+var Attrs = require('./attrs');
+var Block = require('./block');
+var inlineTags = require('../inline-tags');
 
 /**
  * Initialize a `Tag` node with the given tag `name` and optional `block`.
@@ -2562,10 +2567,10 @@ Tag.prototype.canInline = function(){
   return false;
 };
 
-},{"../inline-tags":4,"./attrs":7,"./block":9}],22:[function(_dereq_,module,exports){
+},{"../inline-tags":4,"./attrs":7,"./block":9}],22:[function(require,module,exports){
 'use strict';
 
-var Node = _dereq_('./node');
+var Node = require('./node');
 
 /**
  * Initialize a `Text` node with optional `line`.
@@ -2589,16 +2594,16 @@ Text.prototype.type = 'Text';
  */
 
 Text.prototype.isText = true;
-},{"./node":20}],23:[function(_dereq_,module,exports){
+},{"./node":20}],23:[function(require,module,exports){
 'use strict';
 
-var Lexer = _dereq_('./lexer');
-var nodes = _dereq_('./nodes');
-var utils = _dereq_('./utils');
-var filters = _dereq_('./filters');
-var path = _dereq_('path');
-var constantinople = _dereq_('constantinople');
-var parseJSExpression = _dereq_('character-parser').parseMax;
+var Lexer = require('./lexer');
+var nodes = require('./nodes');
+var utils = require('./utils');
+var filters = require('./filters');
+var path = require('path');
+var constantinople = require('constantinople');
+var parseJSExpression = require('character-parser').parseMax;
 var extname = path.extname;
 
 /**
@@ -2725,6 +2730,28 @@ Parser.prototype = {
       for (var name in this.mixins)
         ast.unshift(this.mixins[name]);
       return ast;
+    }
+
+    if (!this.extending && !this.included && Object.keys(this.blocks).length){
+      var blocks = [];
+      utils.walkAST(block, function (node) {
+        if (node.type === 'Block' && node.name) {
+          blocks.push(node.name);
+        }
+      });
+      Object.keys(this.blocks).forEach(function (name) {
+        if (blocks.indexOf(name) === -1) {
+          console.dir(this.blocks[name]);
+          console.warn('Warning: Unexpected block "'
+                       + name
+                       + '" '
+                       + ' on line '
+                       + this.blocks[name].line
+                       + ' of '
+                       + (this.blocks[name].filename)
+                       + '. This block is never used. This warning will be an error in v2.0.0');
+        }
+      }.bind(this));
     }
 
     return block;
@@ -3031,7 +3058,7 @@ Parser.prototype = {
    */
 
   resolvePath: function (path, purpose) {
-    var p = _dereq_('path');
+    var p = require('path');
     var dirname = p.dirname;
     var basename = p.basename;
     var join = p.join;
@@ -3054,7 +3081,7 @@ Parser.prototype = {
    */
 
   parseExtends: function(){
-    var fs = _dereq_('fs');
+    var fs = require('fs');
 
     var path = this.resolvePath(this.expect('extends').val.trim(), 'extends');
     if ('.jade' != path.substr(-5)) path += '.jade';
@@ -3082,6 +3109,7 @@ Parser.prototype = {
     block = 'indent' == this.peek().type
       ? this.block()
       : new nodes.Block(new nodes.Literal(''));
+    block.name = name;
 
     var prev = this.blocks[name] || {prepended: [], appended: []}
     if (prev.mode === 'replace') return this.blocks[name] = prev;
@@ -3122,7 +3150,7 @@ Parser.prototype = {
    */
 
   parseInclude: function(){
-    var fs = _dereq_('fs');
+    var fs = require('fs');
     var tok = this.expect('include');
 
     var path = this.resolvePath(tok.val.trim(), 'include');
@@ -3143,6 +3171,7 @@ Parser.prototype = {
     var str = fs.readFileSync(path, 'utf8');
     var parser = new this.constructor(str, path, this.options);
     parser.blocks = utils.merge({}, this.blocks);
+    parser.included = true;
 
     parser.mixins = this.mixins;
 
@@ -3400,7 +3429,7 @@ Parser.prototype = {
   }
 };
 
-},{"./filters":3,"./lexer":6,"./nodes":16,"./utils":26,"character-parser":33,"constantinople":34,"fs":27,"path":30}],24:[function(_dereq_,module,exports){
+},{"./filters":3,"./lexer":6,"./nodes":16,"./utils":26,"character-parser":33,"constantinople":34,"fs":27,"path":29}],24:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3580,7 +3609,7 @@ exports.rethrow = function rethrow(err, filename, lineno, str){
     throw err;
   }
   try {
-    str =  str || _dereq_('fs').readFileSync(filename, 'utf8')
+    str = str || require('fs').readFileSync(filename, 'utf8')
   } catch (ex) {
     rethrow(err, null, lineno)
   }
@@ -3605,7 +3634,7 @@ exports.rethrow = function rethrow(err, filename, lineno, str){
   throw err;
 };
 
-},{"fs":27}],25:[function(_dereq_,module,exports){
+},{"fs":27}],25:[function(require,module,exports){
 'use strict';
 
 // source: http://www.w3.org/html/wg/drafts/html/master/syntax.html#void-elements
@@ -3629,7 +3658,7 @@ module.exports = [
   , 'wbr'
 ];
 
-},{}],26:[function(_dereq_,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3646,10 +3675,40 @@ exports.merge = function(a, b) {
   return a;
 };
 
+exports.walkAST = function walkAST(ast, before, after) {
+  before && before(ast);
+  switch (ast.type) {
+    case 'Block':
+      ast.nodes.forEach(function (node) {
+        walkAST(node, before, after);
+      });
+      break;
+    case 'Case':
+    case 'Each':
+    case 'Mixin':
+    case 'Tag':
+    case 'When':
+      ast.block && walkAST(ast.block, before, after);
+      break;
+    case 'Attrs':
+    case 'BlockComment':
+    case 'Code':
+    case 'Comment':
+    case 'Doctype':
+    case 'Filter':
+    case 'Literal':
+    case 'MixinBlock':
+    case 'Text':
+      break;
+    default:
+      throw new Error('Unexpected node type ' + ast.type);
+      break;
+  }
+  after && after(ast);
+};
+},{}],27:[function(require,module,exports){
 
-},{}],27:[function(_dereq_,module,exports){
-
-},{}],28:[function(_dereq_,module,exports){
+},{}],28:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -3674,62 +3733,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],29:[function(_dereq_,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],30:[function(_dereq_,module,exports){
+},{}],29:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3956,15 +3960,75 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this,_dereq_("/Users/forbeslindesay/GitHub/jade/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/Users/forbeslindesay/GitHub/jade/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":29}],31:[function(_dereq_,module,exports){
+}).call(this,require('_process'))
+},{"_process":30}],30:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    draining = true;
+    var currentQueue;
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        var i = -1;
+        while (++i < len) {
+            currentQueue[i]();
+        }
+        len = queue.length;
+    }
+    draining = false;
+}
+process.nextTick = function (fun) {
+    queue.push(fun);
+    if (!draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],31:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],32:[function(_dereq_,module,exports){
+},{}],32:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4491,7 +4555,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = _dereq_('./support/isBuffer');
+exports.isBuffer = require('./support/isBuffer');
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -4535,7 +4599,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = _dereq_('inherits');
+exports.inherits = require('inherits');
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -4553,8 +4617,8 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,_dereq_("/Users/forbeslindesay/GitHub/jade/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":31,"/Users/forbeslindesay/GitHub/jade/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":29,"inherits":28}],33:[function(_dereq_,module,exports){
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":31,"_process":30,"inherits":28}],33:[function(require,module,exports){
 exports = (module.exports = parse);
 exports.parse = parse;
 function parse(src, state, options) {
@@ -4773,10 +4837,10 @@ function isRegexp(history) {
   return false;
 }
 
-},{}],34:[function(_dereq_,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict'
 
-var uglify = _dereq_('uglify-js')
+var uglify = require('uglify-js')
 
 var lastSRC = '(null)'
 var lastRes = true
@@ -4812,19 +4876,34 @@ function detect(src) {
     .map(function (node, name) {
       return name
     })
+  
+  // Walk the AST tree in search for `this`
+  // Add a fake "this" global when found
+  var has_this = false;
+  var walker = new uglify.TreeWalker(function(node) {
+    if (node instanceof uglify.AST_This) {
+      has_this = true;
+    }
+  });
+  ast.walk(walker);
+  if (has_this) {
+    globals.push('this')
+  }
+  
   return globals
 }
-},{"uglify-js":45}],35:[function(_dereq_,module,exports){
+
+},{"uglify-js":45}],35:[function(require,module,exports){
 /*
  * Copyright 2009-2011 Mozilla Foundation and contributors
  * Licensed under the New BSD license. See LICENSE.txt or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-exports.SourceMapGenerator = _dereq_('./source-map/source-map-generator').SourceMapGenerator;
-exports.SourceMapConsumer = _dereq_('./source-map/source-map-consumer').SourceMapConsumer;
-exports.SourceNode = _dereq_('./source-map/source-node').SourceNode;
+exports.SourceMapGenerator = require('./source-map/source-map-generator').SourceMapGenerator;
+exports.SourceMapConsumer = require('./source-map/source-map-consumer').SourceMapConsumer;
+exports.SourceNode = require('./source-map/source-node').SourceNode;
 
-},{"./source-map/source-map-consumer":40,"./source-map/source-map-generator":41,"./source-map/source-node":42}],36:[function(_dereq_,module,exports){
+},{"./source-map/source-map-consumer":40,"./source-map/source-map-generator":41,"./source-map/source-node":42}],36:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -4832,11 +4911,11 @@ exports.SourceNode = _dereq_('./source-map/source-node').SourceNode;
  * http://opensource.org/licenses/BSD-3-Clause
  */
 if (typeof define !== 'function') {
-    var define = _dereq_('amdefine')(module, _dereq_);
+    var define = require('amdefine')(module, require);
 }
-define(function (_dereq_, exports, module) {
+define(function (require, exports, module) {
 
-  var util = _dereq_('./util');
+  var util = require('./util');
 
   /**
    * A data structure which is a combination of an array and a set. Adding a new
@@ -4923,7 +5002,7 @@ define(function (_dereq_, exports, module) {
 
 });
 
-},{"./util":43,"amdefine":44}],37:[function(_dereq_,module,exports){
+},{"./util":43,"amdefine":44}],37:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -4961,11 +5040,11 @@ define(function (_dereq_, exports, module) {
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 if (typeof define !== 'function') {
-    var define = _dereq_('amdefine')(module, _dereq_);
+    var define = require('amdefine')(module, require);
 }
-define(function (_dereq_, exports, module) {
+define(function (require, exports, module) {
 
-  var base64 = _dereq_('./base64');
+  var base64 = require('./base64');
 
   // A single base 64 digit can contain 6 bits of data. For the base 64 variable
   // length quantities we use in the source map spec, the first bit is the sign,
@@ -5069,7 +5148,7 @@ define(function (_dereq_, exports, module) {
 
 });
 
-},{"./base64":38,"amdefine":44}],38:[function(_dereq_,module,exports){
+},{"./base64":38,"amdefine":44}],38:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -5077,9 +5156,9 @@ define(function (_dereq_, exports, module) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 if (typeof define !== 'function') {
-    var define = _dereq_('amdefine')(module, _dereq_);
+    var define = require('amdefine')(module, require);
 }
-define(function (_dereq_, exports, module) {
+define(function (require, exports, module) {
 
   var charToIntMap = {};
   var intToCharMap = {};
@@ -5113,7 +5192,7 @@ define(function (_dereq_, exports, module) {
 
 });
 
-},{"amdefine":44}],39:[function(_dereq_,module,exports){
+},{"amdefine":44}],39:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -5121,9 +5200,9 @@ define(function (_dereq_, exports, module) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 if (typeof define !== 'function') {
-    var define = _dereq_('amdefine')(module, _dereq_);
+    var define = require('amdefine')(module, require);
 }
-define(function (_dereq_, exports, module) {
+define(function (require, exports, module) {
 
   /**
    * Recursive implementation of binary search.
@@ -5196,7 +5275,7 @@ define(function (_dereq_, exports, module) {
 
 });
 
-},{"amdefine":44}],40:[function(_dereq_,module,exports){
+},{"amdefine":44}],40:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -5204,14 +5283,14 @@ define(function (_dereq_, exports, module) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 if (typeof define !== 'function') {
-    var define = _dereq_('amdefine')(module, _dereq_);
+    var define = require('amdefine')(module, require);
 }
-define(function (_dereq_, exports, module) {
+define(function (require, exports, module) {
 
-  var util = _dereq_('./util');
-  var binarySearch = _dereq_('./binary-search');
-  var ArraySet = _dereq_('./array-set').ArraySet;
-  var base64VLQ = _dereq_('./base64-vlq');
+  var util = require('./util');
+  var binarySearch = require('./binary-search');
+  var ArraySet = require('./array-set').ArraySet;
+  var base64VLQ = require('./base64-vlq');
 
   /**
    * A SourceMapConsumer instance represents a parsed source map which we can
@@ -5676,7 +5755,7 @@ define(function (_dereq_, exports, module) {
 
 });
 
-},{"./array-set":36,"./base64-vlq":37,"./binary-search":39,"./util":43,"amdefine":44}],41:[function(_dereq_,module,exports){
+},{"./array-set":36,"./base64-vlq":37,"./binary-search":39,"./util":43,"amdefine":44}],41:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -5684,13 +5763,13 @@ define(function (_dereq_, exports, module) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 if (typeof define !== 'function') {
-    var define = _dereq_('amdefine')(module, _dereq_);
+    var define = require('amdefine')(module, require);
 }
-define(function (_dereq_, exports, module) {
+define(function (require, exports, module) {
 
-  var base64VLQ = _dereq_('./base64-vlq');
-  var util = _dereq_('./util');
-  var ArraySet = _dereq_('./array-set').ArraySet;
+  var base64VLQ = require('./base64-vlq');
+  var util = require('./util');
+  var ArraySet = require('./array-set').ArraySet;
 
   /**
    * An instance of the SourceMapGenerator represents a source map which is
@@ -5908,6 +5987,9 @@ define(function (_dereq_, exports, module) {
       aSourceMapConsumer.sources.forEach(function (sourceFile) {
         var content = aSourceMapConsumer.sourceContentFor(sourceFile);
         if (content) {
+          if (aSourceMapPath) {
+            sourceFile = util.join(aSourceMapPath, sourceFile);
+          }
           if (sourceRoot) {
             sourceFile = util.relative(sourceRoot, sourceFile);
           }
@@ -6075,7 +6157,7 @@ define(function (_dereq_, exports, module) {
 
 });
 
-},{"./array-set":36,"./base64-vlq":37,"./util":43,"amdefine":44}],42:[function(_dereq_,module,exports){
+},{"./array-set":36,"./base64-vlq":37,"./util":43,"amdefine":44}],42:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -6083,12 +6165,19 @@ define(function (_dereq_, exports, module) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 if (typeof define !== 'function') {
-    var define = _dereq_('amdefine')(module, _dereq_);
+    var define = require('amdefine')(module, require);
 }
-define(function (_dereq_, exports, module) {
+define(function (require, exports, module) {
 
-  var SourceMapGenerator = _dereq_('./source-map-generator').SourceMapGenerator;
-  var util = _dereq_('./util');
+  var SourceMapGenerator = require('./source-map-generator').SourceMapGenerator;
+  var util = require('./util');
+
+  // Matches a Windows-style `\r\n` newline or a `\n` newline used by all other
+  // operating systems these days (capturing the result).
+  var REGEX_NEWLINE = /(\r?\n)/g;
+
+  // Matches a Windows-style newline, or any character.
+  var REGEX_CHARACTER = /\r\n|[\s\S]/g;
 
   /**
    * SourceNodes provide a way to abstract over interpolating/concatenating
@@ -6124,9 +6213,17 @@ define(function (_dereq_, exports, module) {
       // and the SourceMap
       var node = new SourceNode();
 
-      // The generated code
-      // Processed fragments are removed from this array.
-      var remainingLines = aGeneratedCode.split('\n');
+      // All even indices of this array are one line of the generated code,
+      // while all odd indices are the newlines between two adjacent lines
+      // (since `REGEX_NEWLINE` captures its match).
+      // Processed fragments are removed from this array, by calling `shiftNextLine`.
+      var remainingLines = aGeneratedCode.split(REGEX_NEWLINE);
+      var shiftNextLine = function() {
+        var lineContents = remainingLines.shift();
+        // The last line of a file might not have a newline.
+        var newLine = remainingLines.shift() || "";
+        return lineContents + newLine;
+      };
 
       // We need to remember the position of "remainingLines"
       var lastGeneratedLine = 1, lastGeneratedColumn = 0;
@@ -6143,7 +6240,7 @@ define(function (_dereq_, exports, module) {
           if (lastGeneratedLine < mapping.generatedLine) {
             var code = "";
             // Associate first line with "lastMapping"
-            addMappingWithCode(lastMapping, remainingLines.shift() + "\n");
+            addMappingWithCode(lastMapping, shiftNextLine());
             lastGeneratedLine++;
             lastGeneratedColumn = 0;
             // The remaining code is added without mapping
@@ -6167,7 +6264,7 @@ define(function (_dereq_, exports, module) {
         // to the SourceNode without any mapping.
         // Each line is added as separate string.
         while (lastGeneratedLine < mapping.generatedLine) {
-          node.add(remainingLines.shift() + "\n");
+          node.add(shiftNextLine());
           lastGeneratedLine++;
         }
         if (lastGeneratedColumn < mapping.generatedColumn) {
@@ -6182,12 +6279,10 @@ define(function (_dereq_, exports, module) {
       if (remainingLines.length > 0) {
         if (lastMapping) {
           // Associate the remaining code in the current line with "lastMapping"
-          var lastLine = remainingLines.shift();
-          if (remainingLines.length > 0) lastLine += "\n";
-          addMappingWithCode(lastMapping, lastLine);
+          addMappingWithCode(lastMapping, shiftNextLine());
         }
         // and add the remaining lines without any mapping
-        node.add(remainingLines.join("\n"));
+        node.add(remainingLines.join(""));
       }
 
       // Copy sourcesContent into SourceNode
@@ -6426,8 +6521,8 @@ define(function (_dereq_, exports, module) {
         lastOriginalSource = null;
         sourceMappingActive = false;
       }
-      chunk.split('').forEach(function (ch, idx, array) {
-        if (ch === '\n') {
+      chunk.match(REGEX_CHARACTER).forEach(function (ch, idx, array) {
+        if (REGEX_NEWLINE.test(ch)) {
           generated.line++;
           generated.column = 0;
           // Mappings end at eol
@@ -6449,7 +6544,7 @@ define(function (_dereq_, exports, module) {
             });
           }
         } else {
-          generated.column++;
+          generated.column += ch.length;
         }
       });
     });
@@ -6464,7 +6559,7 @@ define(function (_dereq_, exports, module) {
 
 });
 
-},{"./source-map-generator":41,"./util":43,"amdefine":44}],43:[function(_dereq_,module,exports){
+},{"./source-map-generator":41,"./util":43,"amdefine":44}],43:[function(require,module,exports){
 /* -*- Mode: js; js-indent-level: 2; -*- */
 /*
  * Copyright 2011 Mozilla Foundation and contributors
@@ -6472,9 +6567,9 @@ define(function (_dereq_, exports, module) {
  * http://opensource.org/licenses/BSD-3-Clause
  */
 if (typeof define !== 'function') {
-    var define = _dereq_('amdefine')(module, _dereq_);
+    var define = require('amdefine')(module, require);
 }
-define(function (_dereq_, exports, module) {
+define(function (require, exports, module) {
 
   /**
    * This is a helper function for getting values from parameter/options
@@ -6768,7 +6863,7 @@ define(function (_dereq_, exports, module) {
 
 });
 
-},{"amdefine":44}],44:[function(_dereq_,module,exports){
+},{"amdefine":44}],44:[function(require,module,exports){
 (function (process,__filename){
 /** vim: et:ts=4:sw=4:sts=4
  * @license amdefine 0.1.0 Copyright (c) 2011, The Dojo Foundation All Rights Reserved.
@@ -6795,7 +6890,7 @@ function amdefine(module, requireFn) {
     var defineCache = {},
         loaderCache = {},
         alreadyCalled = false,
-        path = _dereq_('path'),
+        path = require('path'),
         makeRequire, stringRequire;
 
     /**
@@ -7070,10 +7165,10 @@ function amdefine(module, requireFn) {
 
 module.exports = amdefine;
 
-}).call(this,_dereq_("/Users/forbeslindesay/GitHub/jade/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),"/../node_modules/uglify-js/node_modules/source-map/node_modules/amdefine/amdefine.js")
-},{"/Users/forbeslindesay/GitHub/jade/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":29,"path":30}],45:[function(_dereq_,module,exports){
-var sys = _dereq_("util");
-var MOZ_SourceMap = _dereq_("source-map");
+}).call(this,require('_process'),"/node_modules\\uglify-js\\node_modules\\source-map\\node_modules\\amdefine\\amdefine.js")
+},{"_process":30,"path":29}],45:[function(require,module,exports){
+var sys = require("util");
+var MOZ_SourceMap = require("source-map");
 var UglifyJS = exports;
 /***********************************************************************
 
@@ -7183,10 +7278,12 @@ function defaults(args, defs, croak) {
 };
 
 function merge(obj, ext) {
+    var count = 0;
     for (var i in ext) if (ext.hasOwnProperty(i)) {
         obj[i] = ext[i];
+        count++;
     }
-    return obj;
+    return count;
 };
 
 function noop() {};
@@ -7375,7 +7472,13 @@ Dictionary.prototype = {
         for (var i in this._values)
             ret.push(f(this._values[i], i.substr(1)));
         return ret;
-    }
+    },
+    toObject: function() { return this._values }
+};
+Dictionary.fromObject = function(obj) {
+    var dict = new Dictionary();
+    dict._size = merge(dict._values, obj);
+    return dict;
 };
 
 /***********************************************************************
@@ -7464,7 +7567,7 @@ function DEFNODE(type, props, methods, base) {
     return ctor;
 };
 
-var AST_Token = DEFNODE("Token", "type value line col pos endpos nlb comments_before file", {
+var AST_Token = DEFNODE("Token", "type value line col pos endline endcol endpos nlb comments_before file", {
 }, null);
 
 var AST_Node = DEFNODE("Node", "start end", {
@@ -7500,11 +7603,12 @@ var AST_Debugger = DEFNODE("Debugger", null, {
     $documentation: "Represents a debugger statement",
 }, AST_Statement);
 
-var AST_Directive = DEFNODE("Directive", "value scope", {
+var AST_Directive = DEFNODE("Directive", "value scope quote", {
     $documentation: "Represents a directive, like \"use strict\";",
     $propdoc: {
         value: "[string] The value of this directive as a plain string (it's not an AST_String!)",
-        scope: "[AST_Scope/S] The scope that this directive affects"
+        scope: "[AST_Scope/S] The scope that this directive affects",
+        quote: "[string] the original quote character"
     },
 }, AST_Statement);
 
@@ -7585,21 +7689,27 @@ var AST_DWLoop = DEFNODE("DWLoop", "condition", {
     $documentation: "Base class for do/while statements",
     $propdoc: {
         condition: "[AST_Node] the loop condition.  Should not be instanceof AST_Statement"
-    },
+    }
+}, AST_IterationStatement);
+
+var AST_Do = DEFNODE("Do", null, {
+    $documentation: "A `do` statement",
+    _walk: function(visitor) {
+        return visitor._visit(this, function(){
+            this.body._walk(visitor);
+            this.condition._walk(visitor);
+        });
+    }
+}, AST_DWLoop);
+
+var AST_While = DEFNODE("While", null, {
+    $documentation: "A `while` statement",
     _walk: function(visitor) {
         return visitor._visit(this, function(){
             this.condition._walk(visitor);
             this.body._walk(visitor);
         });
     }
-}, AST_IterationStatement);
-
-var AST_Do = DEFNODE("Do", null, {
-    $documentation: "A `do` statement",
-}, AST_DWLoop);
-
-var AST_While = DEFNODE("While", null, {
-    $documentation: "A `while` statement",
 }, AST_DWLoop);
 
 var AST_For = DEFNODE("For", "init condition step", {
@@ -7675,10 +7785,10 @@ var AST_Toplevel = DEFNODE("Toplevel", "globals", {
         var parameters = [];
 
         arg_parameter_pairs.forEach(function(pair) {
-            var split = pair.split(":");
+            var splitAt = pair.lastIndexOf(":");
 
-            args.push(split[0]);
-            parameters.push(split[1]);
+            args.push(pair.substr(0, splitAt));
+            parameters.push(pair.substr(splitAt + 1));
         });
 
         var wrapped_tl = "(function(" + parameters.join(",") + "){ '$ORIG'; })(" + args.join(",") + ")";
@@ -8140,8 +8250,11 @@ var AST_ObjectProperty = DEFNODE("ObjectProperty", "key value", {
     }
 });
 
-var AST_ObjectKeyVal = DEFNODE("ObjectKeyVal", null, {
+var AST_ObjectKeyVal = DEFNODE("ObjectKeyVal", "quote", {
     $documentation: "A key: value object property",
+    $propdoc: {
+        quote: "[string] the original quote character"
+    }
 }, AST_ObjectProperty);
 
 var AST_ObjectSetter = DEFNODE("ObjectSetter", null, {
@@ -8226,10 +8339,11 @@ var AST_Constant = DEFNODE("Constant", null, {
     }
 });
 
-var AST_String = DEFNODE("String", "value", {
+var AST_String = DEFNODE("String", "value quote", {
     $documentation: "A string literal",
     $propdoc: {
-        value: "[string] the contents of this string"
+        value: "[string] the contents of this string",
+        quote: "[string] the original quote character"
     }
 }, AST_Constant);
 
@@ -8485,7 +8599,8 @@ var REGEXP_MODIFIERS = makePredicate(characters("gmsiy"));
 
 // regexps adapted from http://xregexp.com/plugins/#unicode
 var UNICODE = {
-    letter: new RegExp("[\\u0041-\\u005A\\u0061-\\u007A\\u00AA\\u00B5\\u00BA\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0370-\\u0374\\u0376\\u0377\\u037A-\\u037D\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03F5\\u03F7-\\u0481\\u048A-\\u0523\\u0531-\\u0556\\u0559\\u0561-\\u0587\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0621-\\u064A\\u066E\\u066F\\u0671-\\u06D3\\u06D5\\u06E5\\u06E6\\u06EE\\u06EF\\u06FA-\\u06FC\\u06FF\\u0710\\u0712-\\u072F\\u074D-\\u07A5\\u07B1\\u07CA-\\u07EA\\u07F4\\u07F5\\u07FA\\u0904-\\u0939\\u093D\\u0950\\u0958-\\u0961\\u0971\\u0972\\u097B-\\u097F\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BD\\u09CE\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AD0\\u0AE0\\u0AE1\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B71\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BD0\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C33\\u0C35-\\u0C39\\u0C3D\\u0C58\\u0C59\\u0C60\\u0C61\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBD\\u0CDE\\u0CE0\\u0CE1\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D28\\u0D2A-\\u0D39\\u0D3D\\u0D60\\u0D61\\u0D7A-\\u0D7F\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0E01-\\u0E30\\u0E32\\u0E33\\u0E40-\\u0E46\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB0\\u0EB2\\u0EB3\\u0EBD\\u0EC0-\\u0EC4\\u0EC6\\u0EDC\\u0EDD\\u0F00\\u0F40-\\u0F47\\u0F49-\\u0F6C\\u0F88-\\u0F8B\\u1000-\\u102A\\u103F\\u1050-\\u1055\\u105A-\\u105D\\u1061\\u1065\\u1066\\u106E-\\u1070\\u1075-\\u1081\\u108E\\u10A0-\\u10C5\\u10D0-\\u10FA\\u10FC\\u1100-\\u1159\\u115F-\\u11A2\\u11A8-\\u11F9\\u1200-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u1676\\u1681-\\u169A\\u16A0-\\u16EA\\u1700-\\u170C\\u170E-\\u1711\\u1720-\\u1731\\u1740-\\u1751\\u1760-\\u176C\\u176E-\\u1770\\u1780-\\u17B3\\u17D7\\u17DC\\u1820-\\u1877\\u1880-\\u18A8\\u18AA\\u1900-\\u191C\\u1950-\\u196D\\u1970-\\u1974\\u1980-\\u19A9\\u19C1-\\u19C7\\u1A00-\\u1A16\\u1B05-\\u1B33\\u1B45-\\u1B4B\\u1B83-\\u1BA0\\u1BAE\\u1BAF\\u1C00-\\u1C23\\u1C4D-\\u1C4F\\u1C5A-\\u1C7D\\u1D00-\\u1DBF\\u1E00-\\u1F15\\u1F18-\\u1F1D\\u1F20-\\u1F45\\u1F48-\\u1F4D\\u1F50-\\u1F57\\u1F59\\u1F5B\\u1F5D\\u1F5F-\\u1F7D\\u1F80-\\u1FB4\\u1FB6-\\u1FBC\\u1FBE\\u1FC2-\\u1FC4\\u1FC6-\\u1FCC\\u1FD0-\\u1FD3\\u1FD6-\\u1FDB\\u1FE0-\\u1FEC\\u1FF2-\\u1FF4\\u1FF6-\\u1FFC\\u2071\\u207F\\u2090-\\u2094\\u2102\\u2107\\u210A-\\u2113\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u212F-\\u2139\\u213C-\\u213F\\u2145-\\u2149\\u214E\\u2183\\u2184\\u2C00-\\u2C2E\\u2C30-\\u2C5E\\u2C60-\\u2C6F\\u2C71-\\u2C7D\\u2C80-\\u2CE4\\u2D00-\\u2D25\\u2D30-\\u2D65\\u2D6F\\u2D80-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u2E2F\\u3005\\u3006\\u3031-\\u3035\\u303B\\u303C\\u3041-\\u3096\\u309D-\\u309F\\u30A1-\\u30FA\\u30FC-\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31B7\\u31F0-\\u31FF\\u3400\\u4DB5\\u4E00\\u9FC3\\uA000-\\uA48C\\uA500-\\uA60C\\uA610-\\uA61F\\uA62A\\uA62B\\uA640-\\uA65F\\uA662-\\uA66E\\uA67F-\\uA697\\uA717-\\uA71F\\uA722-\\uA788\\uA78B\\uA78C\\uA7FB-\\uA801\\uA803-\\uA805\\uA807-\\uA80A\\uA80C-\\uA822\\uA840-\\uA873\\uA882-\\uA8B3\\uA90A-\\uA925\\uA930-\\uA946\\uAA00-\\uAA28\\uAA40-\\uAA42\\uAA44-\\uAA4B\\uAC00\\uD7A3\\uF900-\\uFA2D\\uFA30-\\uFA6A\\uFA70-\\uFAD9\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFB1D\\uFB1F-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF21-\\uFF3A\\uFF41-\\uFF5A\\uFF66-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC]"),
+    letter: new RegExp("[\\u0041-\\u005A\\u0061-\\u007A\\u00AA\\u00B5\\u00BA\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02C1\\u02C6-\\u02D1\\u02E0-\\u02E4\\u02EC\\u02EE\\u0370-\\u0374\\u0376\\u0377\\u037A-\\u037D\\u037F\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03F5\\u03F7-\\u0481\\u048A-\\u052F\\u0531-\\u0556\\u0559\\u0561-\\u0587\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0620-\\u064A\\u066E\\u066F\\u0671-\\u06D3\\u06D5\\u06E5\\u06E6\\u06EE\\u06EF\\u06FA-\\u06FC\\u06FF\\u0710\\u0712-\\u072F\\u074D-\\u07A5\\u07B1\\u07CA-\\u07EA\\u07F4\\u07F5\\u07FA\\u0800-\\u0815\\u081A\\u0824\\u0828\\u0840-\\u0858\\u08A0-\\u08B2\\u0904-\\u0939\\u093D\\u0950\\u0958-\\u0961\\u0971-\\u0980\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09BD\\u09CE\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AD0\\u0AE0\\u0AE1\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B35-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B71\\u0B83\\u0B85-\\u0B8A\\u0B8E-\\u0B90\\u0B92-\\u0B95\\u0B99\\u0B9A\\u0B9C\\u0B9E\\u0B9F\\u0BA3\\u0BA4\\u0BA8-\\u0BAA\\u0BAE-\\u0BB9\\u0BD0\\u0C05-\\u0C0C\\u0C0E-\\u0C10\\u0C12-\\u0C28\\u0C2A-\\u0C39\\u0C3D\\u0C58\\u0C59\\u0C60\\u0C61\\u0C85-\\u0C8C\\u0C8E-\\u0C90\\u0C92-\\u0CA8\\u0CAA-\\u0CB3\\u0CB5-\\u0CB9\\u0CBD\\u0CDE\\u0CE0\\u0CE1\\u0CF1\\u0CF2\\u0D05-\\u0D0C\\u0D0E-\\u0D10\\u0D12-\\u0D3A\\u0D3D\\u0D4E\\u0D60\\u0D61\\u0D7A-\\u0D7F\\u0D85-\\u0D96\\u0D9A-\\u0DB1\\u0DB3-\\u0DBB\\u0DBD\\u0DC0-\\u0DC6\\u0E01-\\u0E30\\u0E32\\u0E33\\u0E40-\\u0E46\\u0E81\\u0E82\\u0E84\\u0E87\\u0E88\\u0E8A\\u0E8D\\u0E94-\\u0E97\\u0E99-\\u0E9F\\u0EA1-\\u0EA3\\u0EA5\\u0EA7\\u0EAA\\u0EAB\\u0EAD-\\u0EB0\\u0EB2\\u0EB3\\u0EBD\\u0EC0-\\u0EC4\\u0EC6\\u0EDC-\\u0EDF\\u0F00\\u0F40-\\u0F47\\u0F49-\\u0F6C\\u0F88-\\u0F8C\\u1000-\\u102A\\u103F\\u1050-\\u1055\\u105A-\\u105D\\u1061\\u1065\\u1066\\u106E-\\u1070\\u1075-\\u1081\\u108E\\u10A0-\\u10C5\\u10C7\\u10CD\\u10D0-\\u10FA\\u10FC-\\u1248\\u124A-\\u124D\\u1250-\\u1256\\u1258\\u125A-\\u125D\\u1260-\\u1288\\u128A-\\u128D\\u1290-\\u12B0\\u12B2-\\u12B5\\u12B8-\\u12BE\\u12C0\\u12C2-\\u12C5\\u12C8-\\u12D6\\u12D8-\\u1310\\u1312-\\u1315\\u1318-\\u135A\\u1380-\\u138F\\u13A0-\\u13F4\\u1401-\\u166C\\u166F-\\u167F\\u1681-\\u169A\\u16A0-\\u16EA\\u16EE-\\u16F8\\u1700-\\u170C\\u170E-\\u1711\\u1720-\\u1731\\u1740-\\u1751\\u1760-\\u176C\\u176E-\\u1770\\u1780-\\u17B3\\u17D7\\u17DC\\u1820-\\u1877\\u1880-\\u18A8\\u18AA\\u18B0-\\u18F5\\u1900-\\u191E\\u1950-\\u196D\\u1970-\\u1974\\u1980-\\u19AB\\u19C1-\\u19C7\\u1A00-\\u1A16\\u1A20-\\u1A54\\u1AA7\\u1B05-\\u1B33\\u1B45-\\u1B4B\\u1B83-\\u1BA0\\u1BAE\\u1BAF\\u1BBA-\\u1BE5\\u1C00-\\u1C23\\u1C4D-\\u1C4F\\u1C5A-\\u1C7D\\u1CE9-\\u1CEC\\u1CEE-\\u1CF1\\u1CF5\\u1CF6\\u1D00-\\u1DBF\\u1E00-\\u1F15\\u1F18-\\u1F1D\\u1F20-\\u1F45\\u1F48-\\u1F4D\\u1F50-\\u1F57\\u1F59\\u1F5B\\u1F5D\\u1F5F-\\u1F7D\\u1F80-\\u1FB4\\u1FB6-\\u1FBC\\u1FBE\\u1FC2-\\u1FC4\\u1FC6-\\u1FCC\\u1FD0-\\u1FD3\\u1FD6-\\u1FDB\\u1FE0-\\u1FEC\\u1FF2-\\u1FF4\\u1FF6-\\u1FFC\\u2071\\u207F\\u2090-\\u209C\\u2102\\u2107\\u210A-\\u2113\\u2115\\u2119-\\u211D\\u2124\\u2126\\u2128\\u212A-\\u212D\\u212F-\\u2139\\u213C-\\u213F\\u2145-\\u2149\\u214E\\u2160-\\u2188\\u2C00-\\u2C2E\\u2C30-\\u2C5E\\u2C60-\\u2CE4\\u2CEB-\\u2CEE\\u2CF2\\u2CF3\\u2D00-\\u2D25\\u2D27\\u2D2D\\u2D30-\\u2D67\\u2D6F\\u2D80-\\u2D96\\u2DA0-\\u2DA6\\u2DA8-\\u2DAE\\u2DB0-\\u2DB6\\u2DB8-\\u2DBE\\u2DC0-\\u2DC6\\u2DC8-\\u2DCE\\u2DD0-\\u2DD6\\u2DD8-\\u2DDE\\u2E2F\\u3005-\\u3007\\u3021-\\u3029\\u3031-\\u3035\\u3038-\\u303C\\u3041-\\u3096\\u309D-\\u309F\\u30A1-\\u30FA\\u30FC-\\u30FF\\u3105-\\u312D\\u3131-\\u318E\\u31A0-\\u31BA\\u31F0-\\u31FF\\u3400-\\u4DB5\\u4E00-\\u9FCC\\uA000-\\uA48C\\uA4D0-\\uA4FD\\uA500-\\uA60C\\uA610-\\uA61F\\uA62A\\uA62B\\uA640-\\uA66E\\uA67F-\\uA69D\\uA6A0-\\uA6EF\\uA717-\\uA71F\\uA722-\\uA788\\uA78B-\\uA78E\\uA790-\\uA7AD\\uA7B0\\uA7B1\\uA7F7-\\uA801\\uA803-\\uA805\\uA807-\\uA80A\\uA80C-\\uA822\\uA840-\\uA873\\uA882-\\uA8B3\\uA8F2-\\uA8F7\\uA8FB\\uA90A-\\uA925\\uA930-\\uA946\\uA960-\\uA97C\\uA984-\\uA9B2\\uA9CF\\uA9E0-\\uA9E4\\uA9E6-\\uA9EF\\uA9FA-\\uA9FE\\uAA00-\\uAA28\\uAA40-\\uAA42\\uAA44-\\uAA4B\\uAA60-\\uAA76\\uAA7A\\uAA7E-\\uAAAF\\uAAB1\\uAAB5\\uAAB6\\uAAB9-\\uAABD\\uAAC0\\uAAC2\\uAADB-\\uAADD\\uAAE0-\\uAAEA\\uAAF2-\\uAAF4\\uAB01-\\uAB06\\uAB09-\\uAB0E\\uAB11-\\uAB16\\uAB20-\\uAB26\\uAB28-\\uAB2E\\uAB30-\\uAB5A\\uAB5C-\\uAB5F\\uAB64\\uAB65\\uABC0-\\uABE2\\uAC00-\\uD7A3\\uD7B0-\\uD7C6\\uD7CB-\\uD7FB\\uF900-\\uFA6D\\uFA70-\\uFAD9\\uFB00-\\uFB06\\uFB13-\\uFB17\\uFB1D\\uFB1F-\\uFB28\\uFB2A-\\uFB36\\uFB38-\\uFB3C\\uFB3E\\uFB40\\uFB41\\uFB43\\uFB44\\uFB46-\\uFBB1\\uFBD3-\\uFD3D\\uFD50-\\uFD8F\\uFD92-\\uFDC7\\uFDF0-\\uFDFB\\uFE70-\\uFE74\\uFE76-\\uFEFC\\uFF21-\\uFF3A\\uFF41-\\uFF5A\\uFF66-\\uFFBE\\uFFC2-\\uFFC7\\uFFCA-\\uFFCF\\uFFD2-\\uFFD7\\uFFDA-\\uFFDC]"),
+    digit: new RegExp("[\\u0030-\\u0039\\u0660-\\u0669\\u06F0-\\u06F9\\u07C0-\\u07C9\\u0966-\\u096F\\u09E6-\\u09EF\\u0A66-\\u0A6F\\u0AE6-\\u0AEF\\u0B66-\\u0B6F\\u0BE6-\\u0BEF\\u0C66-\\u0C6F\\u0CE6-\\u0CEF\\u0D66-\\u0D6F\\u0DE6-\\u0DEF\\u0E50-\\u0E59\\u0ED0-\\u0ED9\\u0F20-\\u0F29\\u1040-\\u1049\\u1090-\\u1099\\u17E0-\\u17E9\\u1810-\\u1819\\u1946-\\u194F\\u19D0-\\u19D9\\u1A80-\\u1A89\\u1A90-\\u1A99\\u1B50-\\u1B59\\u1BB0-\\u1BB9\\u1C40-\\u1C49\\u1C50-\\u1C59\\uA620-\\uA629\\uA8D0-\\uA8D9\\uA900-\\uA909\\uA9D0-\\uA9D9\\uA9F0-\\uA9F9\\uAA50-\\uAA59\\uABF0-\\uABF9\\uFF10-\\uFF19]"),
     non_spacing_mark: new RegExp("[\\u0300-\\u036F\\u0483-\\u0487\\u0591-\\u05BD\\u05BF\\u05C1\\u05C2\\u05C4\\u05C5\\u05C7\\u0610-\\u061A\\u064B-\\u065E\\u0670\\u06D6-\\u06DC\\u06DF-\\u06E4\\u06E7\\u06E8\\u06EA-\\u06ED\\u0711\\u0730-\\u074A\\u07A6-\\u07B0\\u07EB-\\u07F3\\u0816-\\u0819\\u081B-\\u0823\\u0825-\\u0827\\u0829-\\u082D\\u0900-\\u0902\\u093C\\u0941-\\u0948\\u094D\\u0951-\\u0955\\u0962\\u0963\\u0981\\u09BC\\u09C1-\\u09C4\\u09CD\\u09E2\\u09E3\\u0A01\\u0A02\\u0A3C\\u0A41\\u0A42\\u0A47\\u0A48\\u0A4B-\\u0A4D\\u0A51\\u0A70\\u0A71\\u0A75\\u0A81\\u0A82\\u0ABC\\u0AC1-\\u0AC5\\u0AC7\\u0AC8\\u0ACD\\u0AE2\\u0AE3\\u0B01\\u0B3C\\u0B3F\\u0B41-\\u0B44\\u0B4D\\u0B56\\u0B62\\u0B63\\u0B82\\u0BC0\\u0BCD\\u0C3E-\\u0C40\\u0C46-\\u0C48\\u0C4A-\\u0C4D\\u0C55\\u0C56\\u0C62\\u0C63\\u0CBC\\u0CBF\\u0CC6\\u0CCC\\u0CCD\\u0CE2\\u0CE3\\u0D41-\\u0D44\\u0D4D\\u0D62\\u0D63\\u0DCA\\u0DD2-\\u0DD4\\u0DD6\\u0E31\\u0E34-\\u0E3A\\u0E47-\\u0E4E\\u0EB1\\u0EB4-\\u0EB9\\u0EBB\\u0EBC\\u0EC8-\\u0ECD\\u0F18\\u0F19\\u0F35\\u0F37\\u0F39\\u0F71-\\u0F7E\\u0F80-\\u0F84\\u0F86\\u0F87\\u0F90-\\u0F97\\u0F99-\\u0FBC\\u0FC6\\u102D-\\u1030\\u1032-\\u1037\\u1039\\u103A\\u103D\\u103E\\u1058\\u1059\\u105E-\\u1060\\u1071-\\u1074\\u1082\\u1085\\u1086\\u108D\\u109D\\u135F\\u1712-\\u1714\\u1732-\\u1734\\u1752\\u1753\\u1772\\u1773\\u17B7-\\u17BD\\u17C6\\u17C9-\\u17D3\\u17DD\\u180B-\\u180D\\u18A9\\u1920-\\u1922\\u1927\\u1928\\u1932\\u1939-\\u193B\\u1A17\\u1A18\\u1A56\\u1A58-\\u1A5E\\u1A60\\u1A62\\u1A65-\\u1A6C\\u1A73-\\u1A7C\\u1A7F\\u1B00-\\u1B03\\u1B34\\u1B36-\\u1B3A\\u1B3C\\u1B42\\u1B6B-\\u1B73\\u1B80\\u1B81\\u1BA2-\\u1BA5\\u1BA8\\u1BA9\\u1C2C-\\u1C33\\u1C36\\u1C37\\u1CD0-\\u1CD2\\u1CD4-\\u1CE0\\u1CE2-\\u1CE8\\u1CED\\u1DC0-\\u1DE6\\u1DFD-\\u1DFF\\u20D0-\\u20DC\\u20E1\\u20E5-\\u20F0\\u2CEF-\\u2CF1\\u2DE0-\\u2DFF\\u302A-\\u302F\\u3099\\u309A\\uA66F\\uA67C\\uA67D\\uA6F0\\uA6F1\\uA802\\uA806\\uA80B\\uA825\\uA826\\uA8C4\\uA8E0-\\uA8F1\\uA926-\\uA92D\\uA947-\\uA951\\uA980-\\uA982\\uA9B3\\uA9B6-\\uA9B9\\uA9BC\\uAA29-\\uAA2E\\uAA31\\uAA32\\uAA35\\uAA36\\uAA43\\uAA4C\\uAAB0\\uAAB2-\\uAAB4\\uAAB7\\uAAB8\\uAABE\\uAABF\\uAAC1\\uABE5\\uABE8\\uABED\\uFB1E\\uFE00-\\uFE0F\\uFE20-\\uFE26]"),
     space_combining_mark: new RegExp("[\\u0903\\u093E-\\u0940\\u0949-\\u094C\\u094E\\u0982\\u0983\\u09BE-\\u09C0\\u09C7\\u09C8\\u09CB\\u09CC\\u09D7\\u0A03\\u0A3E-\\u0A40\\u0A83\\u0ABE-\\u0AC0\\u0AC9\\u0ACB\\u0ACC\\u0B02\\u0B03\\u0B3E\\u0B40\\u0B47\\u0B48\\u0B4B\\u0B4C\\u0B57\\u0BBE\\u0BBF\\u0BC1\\u0BC2\\u0BC6-\\u0BC8\\u0BCA-\\u0BCC\\u0BD7\\u0C01-\\u0C03\\u0C41-\\u0C44\\u0C82\\u0C83\\u0CBE\\u0CC0-\\u0CC4\\u0CC7\\u0CC8\\u0CCA\\u0CCB\\u0CD5\\u0CD6\\u0D02\\u0D03\\u0D3E-\\u0D40\\u0D46-\\u0D48\\u0D4A-\\u0D4C\\u0D57\\u0D82\\u0D83\\u0DCF-\\u0DD1\\u0DD8-\\u0DDF\\u0DF2\\u0DF3\\u0F3E\\u0F3F\\u0F7F\\u102B\\u102C\\u1031\\u1038\\u103B\\u103C\\u1056\\u1057\\u1062-\\u1064\\u1067-\\u106D\\u1083\\u1084\\u1087-\\u108C\\u108F\\u109A-\\u109C\\u17B6\\u17BE-\\u17C5\\u17C7\\u17C8\\u1923-\\u1926\\u1929-\\u192B\\u1930\\u1931\\u1933-\\u1938\\u19B0-\\u19C0\\u19C8\\u19C9\\u1A19-\\u1A1B\\u1A55\\u1A57\\u1A61\\u1A63\\u1A64\\u1A6D-\\u1A72\\u1B04\\u1B35\\u1B3B\\u1B3D-\\u1B41\\u1B43\\u1B44\\u1B82\\u1BA1\\u1BA6\\u1BA7\\u1BAA\\u1C24-\\u1C2B\\u1C34\\u1C35\\u1CE1\\u1CF2\\uA823\\uA824\\uA827\\uA880\\uA881\\uA8B4-\\uA8C3\\uA952\\uA953\\uA983\\uA9B4\\uA9B5\\uA9BA\\uA9BB\\uA9BD-\\uA9C0\\uAA2F\\uAA30\\uAA33\\uAA34\\uAA4D\\uAA7B\\uABE3\\uABE4\\uABE6\\uABE7\\uABE9\\uABEA\\uABEC]"),
     connector_punctuation: new RegExp("[\\u005F\\u203F\\u2040\\u2054\\uFE33\\uFE34\\uFE4D-\\uFE4F\\uFF3F]")
@@ -8498,12 +8613,16 @@ function is_letter(code) {
 };
 
 function is_digit(code) {
-    return code >= 48 && code <= 57; //XXX: find out if "UnicodeDigit" means something else than 0..9
+    return code >= 48 && code <= 57;
 };
 
 function is_alphanumeric_char(code) {
     return is_digit(code) || is_letter(code);
 };
+
+function is_unicode_digit(code) {
+    return UNICODE.digit.test(String.fromCharCode(code));
+}
 
 function is_unicode_combining_mark(ch) {
     return UNICODE.non_spacing_mark.test(ch) || UNICODE.space_combining_mark.test(ch);
@@ -8529,18 +8648,12 @@ function is_identifier_char(ch) {
         || code == 8205 // \u200d: zero-width joiner <ZWJ> (in my ECMA-262 PDF, this is also 200c)
         || is_unicode_combining_mark(ch)
         || is_unicode_connector_punctuation(ch)
+        || is_unicode_digit(code)
     ;
 };
 
 function is_identifier_string(str){
-    var i = str.length;
-    if (i == 0) return false;
-    if (!is_identifier_start(str.charCodeAt(0))) return false;
-    while (--i >= 0) {
-        if (!is_identifier_char(str.charAt(i)))
-            return false;
-    }
-    return true;
+    return /^[a-z_$][a-z0-9_$]*$/i.test(str);
 };
 
 function parse_js_number(num) {
@@ -8553,8 +8666,9 @@ function parse_js_number(num) {
     }
 };
 
-function JS_Parse_Error(message, line, col, pos) {
+function JS_Parse_Error(message, filename, line, col, pos) {
     this.message = message;
+    this.filename = filename;
     this.line = line;
     this.col = col;
     this.pos = pos;
@@ -8566,7 +8680,7 @@ JS_Parse_Error.prototype.toString = function() {
 };
 
 function js_error(message, filename, line, col, pos) {
-    throw new JS_Parse_Error(message, line, col, pos);
+    throw new JS_Parse_Error(message, filename, line, col, pos);
 };
 
 function is_token(token, type, val) {
@@ -8578,7 +8692,7 @@ var EX_EOF = {};
 function tokenizer($TEXT, filename, html5_comments) {
 
     var S = {
-        text            : $TEXT.replace(/\r\n?|[\n\u2028\u2029]/g, "\n").replace(/\uFEFF/g, ''),
+        text            : $TEXT.replace(/\uFEFF/g, ''),
         filename        : filename,
         pos             : 0,
         tokpos          : 0,
@@ -8597,10 +8711,15 @@ function tokenizer($TEXT, filename, html5_comments) {
         var ch = S.text.charAt(S.pos++);
         if (signal_eof && !ch)
             throw EX_EOF;
-        if (ch == "\n") {
+        if ("\r\n\u2028\u2029".indexOf(ch) >= 0) {
             S.newline_before = S.newline_before || !in_string;
             ++S.line;
             S.col = 0;
+            if (!in_string && ch == "\r" && peek() == "\n") {
+                // treat a \r\n sequence as a single \n
+                ++S.pos;
+                ch = "\n";
+            }
         } else {
             ++S.col;
         }
@@ -8634,14 +8753,16 @@ function tokenizer($TEXT, filename, html5_comments) {
                            (type == "punc" && PUNC_BEFORE_EXPRESSION(value)));
         prev_was_dot = (type == "punc" && value == ".");
         var ret = {
-            type   : type,
-            value  : value,
-            line   : S.tokline,
-            col    : S.tokcol,
-            pos    : S.tokpos,
-            endpos : S.pos,
-            nlb    : S.newline_before,
-            file   : filename
+            type    : type,
+            value   : value,
+            line    : S.tokline,
+            col     : S.tokcol,
+            pos     : S.tokpos,
+            endline : S.line,
+            endcol  : S.col,
+            endpos  : S.pos,
+            nlb     : S.newline_before,
+            file    : filename
         };
         if (!is_comment) {
             ret.comments_before = S.comments_before;
@@ -8656,7 +8777,8 @@ function tokenizer($TEXT, filename, html5_comments) {
     };
 
     function skip_whitespace() {
-        while (WHITESPACE_CHARS(peek()))
+        var ch;
+        while (WHITESPACE_CHARS(ch = peek()) || ch == "\u2028" || ch == "\u2029")
             next();
     };
 
@@ -8726,7 +8848,7 @@ function tokenizer($TEXT, filename, html5_comments) {
         return num;
     };
 
-    var read_string = with_eof_error("Unterminated string constant", function(){
+    var read_string = with_eof_error("Unterminated string constant", function(quote_char){
         var quote = next(), ret = "";
         for (;;) {
             var ch = next(true);
@@ -8751,7 +8873,9 @@ function tokenizer($TEXT, filename, html5_comments) {
             else if (ch == quote) break;
             ret += ch;
         }
-        return token("string", ret);
+        var tok = token("string", ret);
+        tok.quote = quote_char;
+        return tok;
     });
 
     function skip_line_comment(type) {
@@ -8764,6 +8888,7 @@ function tokenizer($TEXT, filename, html5_comments) {
             ret = S.text.substring(S.pos, i);
             S.pos = i;
         }
+        S.col = S.tokcol + (S.pos - S.tokpos);
         S.comments_before.push(token(type, ret, true));
         S.regex_allowed = regex_allowed;
         return next_token();
@@ -8905,7 +9030,7 @@ function tokenizer($TEXT, filename, html5_comments) {
         if (!ch) return token("eof");
         var code = ch.charCodeAt(0);
         switch (code) {
-          case 34: case 39: return read_string();
+          case 34: case 39: return read_string(ch);
           case 46: return handle_dot();
           case 47: return handle_slash();
         }
@@ -8981,6 +9106,7 @@ function parse($TEXT, options) {
         toplevel       : null,
         expression     : false,
         html5_comments : true,
+        bare_returns   : false,
     });
 
     var S = {
@@ -9094,8 +9220,14 @@ function parse($TEXT, options) {
           case "string":
             var dir = S.in_directives, stat = simple_statement();
             // XXXv2: decide how to fix directives
-            if (dir && stat.body instanceof AST_String && !is("punc", ","))
-                return new AST_Directive({ value: stat.body.value });
+            if (dir && stat.body instanceof AST_String && !is("punc", ",")) {
+                return new AST_Directive({
+                    start : stat.body.start,
+                    end   : stat.body.end,
+                    quote : stat.body.quote,
+                    value : stat.body.value,
+                });
+            }
             return stat;
           case "num":
           case "regexp":
@@ -9160,7 +9292,7 @@ function parse($TEXT, options) {
                 return if_();
 
               case "return":
-                if (S.in_function == 0)
+                if (S.in_function == 0 && !options.bare_returns)
                     croak("'return' outside of function");
                 return new AST_Return({
                     value: ( is("punc", ";")
@@ -9481,7 +9613,12 @@ function parse($TEXT, options) {
             ret = new AST_Number({ start: tok, end: tok, value: tok.value });
             break;
           case "string":
-            ret = new AST_String({ start: tok, end: tok, value: tok.value });
+            ret = new AST_String({
+                start : tok,
+                end   : tok,
+                value : tok.value,
+                quote : tok.quote
+            });
             break;
           case "regexp":
             ret = new AST_RegExp({ start: tok, end: tok, value: tok.value });
@@ -9594,6 +9731,7 @@ function parse($TEXT, options) {
             expect(":");
             a.push(new AST_ObjectKeyVal({
                 start : start,
+                quote : start.quote,
                 key   : name,
                 value : expression(false),
                 end   : prev()
@@ -10099,23 +10237,36 @@ function SymbolDef(scope, index, orig) {
 
 SymbolDef.prototype = {
     unmangleable: function(options) {
-        return (this.global && !(options && options.toplevel))
+        if (!options) options = {};
+
+        return (this.global && !options.toplevel)
             || this.undeclared
-            || (!(options && options.eval) && (this.scope.uses_eval || this.scope.uses_with));
+            || (!options.eval && (this.scope.uses_eval || this.scope.uses_with))
+            || (options.keep_fnames
+                && (this.orig[0] instanceof AST_SymbolLambda
+                    || this.orig[0] instanceof AST_SymbolDefun));
     },
     mangle: function(options) {
-        if (!this.mangled_name && !this.unmangleable(options)) {
+        var cache = options.cache && options.cache.props;
+        if (this.global && cache && cache.has(this.name)) {
+            this.mangled_name = cache.get(this.name);
+        }
+        else if (!this.mangled_name && !this.unmangleable(options)) {
             var s = this.scope;
             if (!options.screw_ie8 && this.orig[0] instanceof AST_SymbolLambda)
                 s = s.parent_scope;
             this.mangled_name = s.next_mangled(options, this);
+            if (this.global && cache) {
+                cache.set(this.name, this.mangled_name);
+            }
         }
     }
 };
 
 AST_Toplevel.DEFMETHOD("figure_out_scope", function(options){
     options = defaults(options, {
-        screw_ie8: false
+        screw_ie8: false,
+        cache: null
     });
 
     // pass 1: setup scope chaining and handle definitions
@@ -10220,6 +10371,10 @@ AST_Toplevel.DEFMETHOD("figure_out_scope", function(options){
         }
     });
     self.walk(tw);
+
+    if (options.cache) {
+        this.cname = options.cache.cname;
+    }
 });
 
 AST_Scope.DEFMETHOD("init_scope_vars", function(nesting){
@@ -10364,11 +10519,12 @@ AST_Symbol.DEFMETHOD("global", function(){
 
 AST_Toplevel.DEFMETHOD("_default_mangler_options", function(options){
     return defaults(options, {
-        except   : [],
-        eval     : false,
-        sort     : false,
-        toplevel : false,
-        screw_ie8 : false
+        except      : [],
+        eval        : false,
+        sort        : false,
+        toplevel    : false,
+        screw_ie8   : false,
+        keep_fnames : false
     });
 });
 
@@ -10380,6 +10536,15 @@ AST_Toplevel.DEFMETHOD("mangle_names", function(options){
     // the AST_SymbolDeclaration that it points to).
     var lname = -1;
     var to_mangle = [];
+
+    if (options.cache) {
+        this.globals.each(function(symbol){
+            if (options.except.indexOf(symbol.name) < 0) {
+                to_mangle.push(symbol);
+            }
+        });
+    }
+
     var tw = new TreeWalker(function(node, descend){
         if (node instanceof AST_LabeledStatement) {
             // lname is incremented when we get to the AST_Label
@@ -10414,6 +10579,10 @@ AST_Toplevel.DEFMETHOD("mangle_names", function(options){
     });
     this.walk(tw);
     to_mangle.forEach(function(def){ def.mangle(options) });
+
+    if (options.cache) {
+        options.cache.cname = this.cname;
+    }
 });
 
 AST_Toplevel.DEFMETHOD("compute_char_frequency", function(options){
@@ -10513,7 +10682,9 @@ var base54 = (function() {
     base54.freq = function(){ return frequency };
     function base54(num) {
         var ret = "", base = 54;
+        num++;
         do {
+            num--;
             ret += String.fromCharCode(chars[num % base]);
             num = Math.floor(num / base);
             base = 64;
@@ -10574,6 +10745,7 @@ AST_Toplevel.DEFMETHOD("scope_warnings", function(options){
         }
         if (options.unreferenced
             && (node instanceof AST_SymbolDeclaration || node instanceof AST_Label)
+            && !(node instanceof AST_SymbolCatch)
             && node.unreferenced()) {
             AST_Node.warn("{type} {name} is declared but not referenced [{file}:{line},{col}]", {
                 type: node instanceof AST_Label ? "Label" : "Symbol",
@@ -10673,6 +10845,7 @@ function OutputStream(options) {
         preserve_line    : false,
         screw_ie8        : false,
         preamble         : null,
+        quote_style      : 0
     }, true);
 
     var indentation = 0;
@@ -10694,9 +10867,9 @@ function OutputStream(options) {
         });
     };
 
-    function make_string(str) {
+    function make_string(str, quote) {
         var dq = 0, sq = 0;
-        str = str.replace(/[\\\b\f\n\r\t\x22\x27\u2028\u2029\0]/g, function(s){
+        str = str.replace(/[\\\b\f\n\r\t\x22\x27\u2028\u2029\0\ufeff]/g, function(s){
             switch (s) {
               case "\\": return "\\\\";
               case "\b": return "\\b";
@@ -10708,16 +10881,31 @@ function OutputStream(options) {
               case '"': ++dq; return '"';
               case "'": ++sq; return "'";
               case "\0": return "\\x00";
+              case "\ufeff": return "\\ufeff";
             }
             return s;
         });
+        function quote_single() {
+            return "'" + str.replace(/\x27/g, "\\'") + "'";
+        }
+        function quote_double() {
+            return '"' + str.replace(/\x22/g, '\\"') + '"';
+        }
         if (options.ascii_only) str = to_ascii(str);
-        if (dq > sq) return "'" + str.replace(/\x27/g, "\\'") + "'";
-        else return '"' + str.replace(/\x22/g, '\\"') + '"';
+        switch (options.quote_style) {
+          case 1:
+            return quote_single();
+          case 2:
+            return quote_double();
+          case 3:
+            return quote == "'" ? quote_single() : quote_double();
+          default:
+            return dq > sq ? quote_single() : quote_double();
+        }
     };
 
-    function encode_string(str) {
-        var ret = make_string(str);
+    function encode_string(str, quote) {
+        var ret = make_string(str, quote);
         if (options.inline_script)
             ret = ret.replace(/<\x2fscript([>\/\t\n\f\r ])/gi, "<\\/script$1");
         return ret;
@@ -10831,7 +11019,7 @@ function OutputStream(options) {
 
     var newline = options.beautify ? function() {
         print("\n");
-    } : noop;
+    } : maybe_newline;
 
     var semicolon = options.beautify ? function() {
         print(";");
@@ -10933,7 +11121,7 @@ function OutputStream(options) {
         force_semicolon : force_semicolon,
         to_ascii        : to_ascii,
         print_name      : function(name) { print(make_name(name)) },
-        print_string    : function(str) { print(encode_string(str)) },
+        print_string    : function(str, quote) { print(encode_string(str, quote)) },
         next_indent     : next_indent,
         with_indent     : with_indent,
         with_block      : with_block,
@@ -11022,6 +11210,15 @@ function OutputStream(options) {
                         return c(self, comment);
                     });
                 }
+
+                // Keep single line comments after nlb, after nlb
+                if (!output.option("beautify") && comments.length > 0 &&
+                    /comment[134]/.test(comments[0].type) &&
+                    output.col() !== 0 && comments[0].nlb)
+                {
+                    output.print("\n");
+                }
+
                 comments.forEach(function(c){
                     if (/comment[134]/.test(c.type)) {
                         output.print("//" + c.value + "\n");
@@ -11044,7 +11241,13 @@ function OutputStream(options) {
     /* -----[ PARENTHESES ]----- */
 
     function PARENS(nodetype, func) {
-        nodetype.DEFMETHOD("needs_parens", func);
+        if (Array.isArray(nodetype)) {
+            nodetype.forEach(function(nodetype){
+                PARENS(nodetype, func);
+            });
+        } else {
+            nodetype.DEFMETHOD("needs_parens", func);
+        }
     };
 
     PARENS(AST_Node, function(){
@@ -11063,7 +11266,7 @@ function OutputStream(options) {
         return first_in_statement(output);
     });
 
-    PARENS(AST_Unary, function(output){
+    PARENS([ AST_Unary, AST_Undefined ], function(output){
         var p = output.parent();
         return p instanceof AST_PropAccess && p.expression === this;
     });
@@ -11153,13 +11356,7 @@ function OutputStream(options) {
             return true;
     });
 
-    PARENS(AST_NaN, function(output){
-        var p = output.parent();
-        if (p instanceof AST_PropAccess && p.expression === this)
-            return true;
-    });
-
-    function assign_and_conditional_paren_rules(output) {
+    PARENS([ AST_Assign, AST_Conditional ], function (output){
         var p = output.parent();
         // !(a = false) → true
         if (p instanceof AST_Unary)
@@ -11176,15 +11373,12 @@ function OutputStream(options) {
         // (a = foo)["prop"] —or— (a = foo).prop
         if (p instanceof AST_PropAccess && p.expression === this)
             return true;
-    };
-
-    PARENS(AST_Assign, assign_and_conditional_paren_rules);
-    PARENS(AST_Conditional, assign_and_conditional_paren_rules);
+    });
 
     /* -----[ PRINTERS ]----- */
 
     DEFPRINT(AST_Directive, function(self, output){
-        output.print_string(self.value);
+        output.print_string(self.value, self.quote);
         output.semicolon();
     });
     DEFPRINT(AST_Debugger, function(self, output){
@@ -11266,7 +11460,7 @@ function OutputStream(options) {
         output.print("fo" + "r");
         output.space();
         output.with_parens(function(){
-            if (self.init) {
+            if (self.init && !(self.init instanceof AST_EmptyStatement)) {
                 if (self.init instanceof AST_Definitions) {
                     self.init.print(output);
                 } else {
@@ -11606,8 +11800,12 @@ function OutputStream(options) {
     DEFPRINT(AST_UnaryPrefix, function(self, output){
         var op = self.operator;
         output.print(op);
-        if (/^[a-z]/i.test(op))
+        if (/^[a-z]/i.test(op)
+            || (/[+-]$/.test(op)
+                && self.expression instanceof AST_UnaryPrefix
+                && /^[+-]/.test(self.expression.operator))) {
             output.space();
+        }
         self.expression.print(output);
     });
     DEFPRINT(AST_UnaryPostfix, function(self, output){
@@ -11676,6 +11874,7 @@ function OutputStream(options) {
     });
     DEFPRINT(AST_ObjectKeyVal, function(self, output){
         var key = self.key;
+        var quote = self.quote;
         if (output.option("quote_keys")) {
             output.print_string(key + "");
         } else if ((typeof key == "number"
@@ -11686,7 +11885,7 @@ function OutputStream(options) {
         } else if (RESERVED_WORDS(key) ? output.option("screw_ie8") : is_identifier_string(key)) {
             output.print_name(key);
         } else {
-            output.print_string(key);
+            output.print_string(key, quote);
         }
         output.colon();
         self.value.print(output);
@@ -11712,10 +11911,10 @@ function OutputStream(options) {
     });
     DEFPRINT(AST_Hole, noop);
     DEFPRINT(AST_Infinity, function(self, output){
-        output.print("1/0");
+        output.print("Infinity");
     });
     DEFPRINT(AST_NaN, function(self, output){
-        output.print("0/0");
+        output.print("NaN");
     });
     DEFPRINT(AST_This, function(self, output){
         output.print("this");
@@ -11724,7 +11923,7 @@ function OutputStream(options) {
         output.print(self.getValue());
     });
     DEFPRINT(AST_String, function(self, output){
-        output.print_string(self.getValue());
+        output.print_string(self.getValue(), self.quote);
     });
     DEFPRINT(AST_Number, function(self, output){
         output.print(make_num(self.getValue()));
@@ -11973,6 +12172,7 @@ function Compressor(options, false_by_default) {
         unused        : !false_by_default,
         hoist_funs    : !false_by_default,
         keep_fargs    : false,
+        keep_fnames   : false,
         hoist_vars    : false,
         if_return     : !false_by_default,
         join_vars     : !false_by_default,
@@ -12073,10 +12273,10 @@ merge(Compressor.prototype, {
             return make_node(AST_Undefined, orig).optimize(compressor);
           default:
             if (val === null) {
-                return make_node(AST_Null, orig).optimize(compressor);
+                return make_node(AST_Null, orig, { value: null }).optimize(compressor);
             }
             if (val instanceof RegExp) {
-                return make_node(AST_RegExp, orig).optimize(compressor);
+                return make_node(AST_RegExp, orig, { value: val }).optimize(compressor);
             }
             throw new Error(string_template("Can't handle constant of type: {type}", {
                 type: typeof val
@@ -12136,6 +12336,17 @@ merge(Compressor.prototype, {
         return statements;
 
         function process_for_angular(statements) {
+            function has_inject(comment) {
+                return /@ngInject/.test(comment.value);
+            }
+            function make_arguments_names_list(func) {
+                return func.argnames.map(function(sym){
+                    return make_node(AST_String, sym, { value: sym.name });
+                });
+            }
+            function make_array(orig, elements) {
+                return make_node(AST_Array, orig, { elements: elements });
+            }
             function make_injector(func, name) {
                 return make_node(AST_SimpleStatement, func, {
                     body: make_node(AST_Assign, func, {
@@ -12144,37 +12355,56 @@ merge(Compressor.prototype, {
                             expression: make_node(AST_SymbolRef, name, name),
                             property: "$inject"
                         }),
-                        right: make_node(AST_Array, func, {
-                            elements: func.argnames.map(function(sym){
-                                return make_node(AST_String, sym, { value: sym.name });
-                            })
-                        })
+                        right: make_array(func, make_arguments_names_list(func))
                     })
                 });
             }
+            function check_expression(body) {
+                if (body && body.args) {
+                    // if this is a function call check all of arguments passed
+                    body.args.forEach(function(argument, index, array) {
+                        var comments = argument.start.comments_before;
+                        // if the argument is function preceded by @ngInject
+                        if (argument instanceof AST_Lambda && comments.length && has_inject(comments[0])) {
+                            // replace the function with an array of names of its parameters and function at the end
+                            array[index] = make_array(argument, make_arguments_names_list(argument).concat(argument));
+                        }
+                    });
+                    // if this is chained call check previous one recursively
+                    if (body.expression && body.expression.expression) {
+                        check_expression(body.expression.expression);
+                    }
+                }
+            }
             return statements.reduce(function(a, stat){
                 a.push(stat);
-                var token = stat.start;
-                var comments = token.comments_before;
-                if (comments && comments.length > 0) {
-                    var last = comments.pop();
-                    if (/@ngInject/.test(last.value)) {
-                        // case 1: defun
-                        if (stat instanceof AST_Defun) {
-                            a.push(make_injector(stat, stat.name));
-                        }
-                        else if (stat instanceof AST_Definitions) {
-                            stat.definitions.forEach(function(def){
-                                if (def.value && def.value instanceof AST_Lambda) {
-                                    a.push(make_injector(def.value, def.name));
-                                }
-                            });
-                        }
-                        else {
-                            compressor.warn("Unknown statement marked with @ngInject [{file}:{line},{col}]", token);
+
+                if (stat.body && stat.body.args) {
+                    check_expression(stat.body);
+                } else {
+                    var token = stat.start;
+                    var comments = token.comments_before;
+                    if (comments && comments.length > 0) {
+                        var last = comments.pop();
+                        if (has_inject(last)) {
+                            // case 1: defun
+                            if (stat instanceof AST_Defun) {
+                                a.push(make_injector(stat, stat.name));
+                            }
+                            else if (stat instanceof AST_Definitions) {
+                                stat.definitions.forEach(function(def) {
+                                    if (def.value && def.value instanceof AST_Lambda) {
+                                        a.push(make_injector(def.value, def.name));
+                                    }
+                                });
+                            }
+                            else {
+                                compressor.warn("Unknown statement marked with @ngInject [{file}:{line},{col}]", token);
+                            }
                         }
                     }
                 }
+
                 return a;
             }, []);
         }
@@ -12369,7 +12599,7 @@ merge(Compressor.prototype, {
                 seq = [];
             };
             statements.forEach(function(stat){
-                if (stat instanceof AST_SimpleStatement) seq.push(stat.body);
+                if (stat instanceof AST_SimpleStatement && seq.length < 2000) seq.push(stat.body);
                 else push_seq(), ret.push(stat);
             });
             push_seq();
@@ -12686,6 +12916,14 @@ merge(Compressor.prototype, {
             if (d && d.constant && d.init) return ev(d.init, compressor);
             throw def;
         });
+        def(AST_Dot, function(compressor){
+            if (compressor.option("unsafe") && this.property == "length") {
+                var str = ev(this.expression, compressor);
+                if (typeof str == "string")
+                    return str.length;
+            }
+            throw def;
+        });
     })(function(node, func){
         node.DEFMETHOD("_eval", func);
     });
@@ -12800,7 +13038,9 @@ merge(Compressor.prototype, {
                 || this.operator == "--"
                 || this.expression.has_side_effects(compressor);
         });
-        def(AST_SymbolRef, function(compressor){ return false });
+        def(AST_SymbolRef, function(compressor){
+            return this.global() && this.undeclared();
+        });
         def(AST_Object, function(compressor){
             for (var i = this.properties.length; --i >= 0;)
                 if (this.properties[i].has_side_effects(compressor))
@@ -12850,7 +13090,7 @@ merge(Compressor.prototype, {
         def(AST_BlockStatement, block_aborts);
         def(AST_SwitchBranch, block_aborts);
         def(AST_If, function(){
-            return this.alternative && aborts(this.body) && aborts(this.alternative);
+            return this.alternative && aborts(this.body) && aborts(this.alternative) && this;
         });
     })(function(node, func){
         node.DEFMETHOD("aborts", func);
@@ -12956,7 +13196,7 @@ merge(Compressor.prototype, {
             var tt = new TreeTransformer(
                 function before(node, descend, in_list) {
                     if (node instanceof AST_Lambda && !(node instanceof AST_Accessor)) {
-                        if (!compressor.option("keep_fargs")) {
+                        if (compressor.option("unsafe") && !compressor.option("keep_fargs")) {
                             for (var a = node.argnames, i = a.length; --i >= 0;) {
                                 var sym = a[i];
                                 if (sym.unreferenced()) {
@@ -13567,7 +13807,7 @@ merge(Compressor.prototype, {
 
     OPT(AST_Function, function(self, compressor){
         self = AST_Lambda.prototype.optimize.call(self, compressor);
-        if (compressor.option("unused")) {
+        if (compressor.option("unused") && !compressor.option("keep_fnames")) {
             if (self.name && self.name.unreferenced()) {
                 self.name = null;
             }
@@ -13623,6 +13863,11 @@ merge(Compressor.prototype, {
                     }).transform(compressor);
                     break;
                   case "Function":
+                    // new Function() => function(){}
+                    if (self.args.length == 0) return make_node(AST_Function, self, {
+                        argnames: [],
+                        body: []
+                    });
                     if (all(self.args, function(x){ return x instanceof AST_String })) {
                         // quite a corner-case, but we can handle it:
                         //   https://github.com/mishoo/UglifyJS2/issues/203
@@ -13648,6 +13893,7 @@ merge(Compressor.prototype, {
                             } catch(ex) {
                                 if (ex !== ast) throw ex;
                             };
+                            if (!fun) return self;
                             var args = fun.argnames.map(function(arg, i){
                                 return make_node(AST_String, self.args[i], {
                                     value: arg.print_to_string()
@@ -13737,11 +13983,16 @@ merge(Compressor.prototype, {
             }
         }
         if (compressor.option("drop_console")) {
-            if (self.expression instanceof AST_PropAccess &&
-                self.expression.expression instanceof AST_SymbolRef &&
-                self.expression.expression.name == "console" &&
-                self.expression.expression.undeclared()) {
-                return make_node(AST_Undefined, self).transform(compressor);
+            if (self.expression instanceof AST_PropAccess) {
+                var name = self.expression.expression;
+                while (name.expression) {
+                    name = name.expression;
+                }
+                if (name instanceof AST_SymbolRef
+                    && name.name == "console"
+                    && name.undeclared()) {
+                    return make_node(AST_Undefined, self).transform(compressor);
+                }
             }
         }
         return self.evaluate(compressor)[0];
@@ -13801,7 +14052,7 @@ merge(Compressor.prototype, {
         if (self.cdr instanceof AST_UnaryPrefix
             && self.cdr.operator == "void"
             && !self.cdr.expression.has_side_effects(compressor)) {
-            self.cdr.operator = self.car;
+            self.cdr.expression = self.car;
             return self.cdr;
         }
         if (self.cdr instanceof AST_Undefined) {
@@ -13969,6 +14220,12 @@ merge(Compressor.prototype, {
             var rr = self.right.evaluate(compressor);
             if ((ll.length > 1 && !ll[1]) || (rr.length > 1 && !rr[1])) {
                 compressor.warn("Boolean && always false [{file}:{line},{col}]", self.start);
+                if (self.left.has_side_effects(compressor)) {
+                    return make_node(AST_Seq, self, {
+                        car: self.left,
+                        cdr: make_node(AST_False)
+                    }).optimize(compressor);
+                }
                 return make_node(AST_False, self);
             }
             if (ll.length > 1 && ll[1]) {
@@ -13983,6 +14240,12 @@ merge(Compressor.prototype, {
             var rr = self.right.evaluate(compressor);
             if ((ll.length > 1 && ll[1]) || (rr.length > 1 && rr[1])) {
                 compressor.warn("Boolean || always true [{file}:{line},{col}]", self.start);
+                if (self.left.has_side_effects(compressor)) {
+                    return make_node(AST_Seq, self, {
+                        car: self.left,
+                        cdr: make_node(AST_True)
+                    }).optimize(compressor);
+                }
                 return make_node(AST_True, self);
             }
             if (ll.length > 1 && !ll[1]) {
@@ -14103,12 +14366,28 @@ merge(Compressor.prototype, {
               case "undefined":
                 return make_node(AST_Undefined, self);
               case "NaN":
-                return make_node(AST_NaN, self);
+                return make_node(AST_NaN, self).transform(compressor);
               case "Infinity":
-                return make_node(AST_Infinity, self);
+                return make_node(AST_Infinity, self).transform(compressor);
             }
         }
         return self;
+    });
+
+    OPT(AST_Infinity, function (self, compressor) {
+        return make_node(AST_Binary, self, {
+            operator : '/',
+            left     : make_node(AST_Number, self, {value: 1}),
+            right    : make_node(AST_Number, self, {value: 0})
+        });
+    });
+
+    OPT(AST_NaN, function (self, compressor) {
+        return make_node(AST_Binary, self, {
+            operator : '/',
+            left     : make_node(AST_Number, self, {value: 0}),
+            right    : make_node(AST_Number, self, {value: 0})
+        });
     });
 
     OPT(AST_Undefined, function(self, compressor){
@@ -14223,6 +14502,31 @@ merge(Compressor.prototype, {
                 alternative: alternative
             });
         }
+        // x=y?1:1 --> x=1
+        if (consequent instanceof AST_Constant
+            && alternative instanceof AST_Constant
+            && consequent.equivalent_to(alternative)) {
+            if (self.condition.has_side_effects(compressor)) {
+                return AST_Seq.from_array([self.condition, make_node_from_constant(compressor, consequent.value, self)]);
+            } else {
+                return make_node_from_constant(compressor, consequent.value, self);
+
+            }
+        }
+        // x=y?true:false --> x=!!y
+        if (consequent instanceof AST_True
+            && alternative instanceof AST_False) {
+            self.condition = self.condition.negate(compressor);
+            return make_node(AST_UnaryPrefix, self.condition, {
+                operator: "!",
+                expression: self.condition
+            });
+        }
+        // x=y?false:true --> x=!y
+        if (consequent instanceof AST_False
+            && alternative instanceof AST_True) {
+            return self.condition.negate(compressor)
+        }
         return self;
     });
 
@@ -14260,7 +14564,7 @@ merge(Compressor.prototype, {
                 return make_node(AST_Dot, self, {
                     expression : self.expression,
                     property   : prop
-                });
+                }).optimize(compressor);
             }
             var v = parseFloat(prop);
             if (!isNaN(v) && v.toString() == prop) {
@@ -14272,8 +14576,21 @@ merge(Compressor.prototype, {
         return self;
     });
 
+    OPT(AST_Dot, function(self, compressor){
+        var prop = self.property;
+        if (RESERVED_WORDS(prop) && !compressor.option("screw_ie8")) {
+            return make_node(AST_Sub, self, {
+                expression : self.expression,
+                property   : make_node(AST_String, self, {
+                    value: prop
+                })
+            }).optimize(compressor);
+        }
+        return self.evaluate(compressor)[0];
+    });
+
     function literals_in_boolean_context(self, compressor) {
-        if (compressor.option("booleans") && compressor.in_boolean_context()) {
+        if (compressor.option("booleans") && compressor.in_boolean_context() && !self.has_side_effects(compressor)) {
             return make_node(AST_True, self);
         }
         return self;
@@ -14339,11 +14656,16 @@ function SourceMap(options) {
         orig_line_diff : 0,
         dest_line_diff : 0,
     });
-    var generator = new MOZ_SourceMap.SourceMapGenerator({
-        file       : options.file,
-        sourceRoot : options.root
-    });
     var orig_map = options.orig && new MOZ_SourceMap.SourceMapConsumer(options.orig);
+    var generator;
+    if (orig_map) {
+      generator = MOZ_SourceMap.SourceMapGenerator.fromSourceMap(orig_map);
+    } else {
+        generator = new MOZ_SourceMap.SourceMapGenerator({
+            file       : options.file,
+            sourceRoot : options.root
+        });
+    }
     function add(source, gen_line, gen_col, orig_line, orig_col, name) {
         if (orig_map) {
             var info = orig_map.originalPositionFor({
@@ -14356,7 +14678,7 @@ function SourceMap(options) {
             source = info.source;
             orig_line = info.line;
             orig_col = info.column;
-            name = info.name;
+            name = info.name || name;
         }
         generator.addMapping({
             generated : { line: gen_line + options.dest_line_diff, column: gen_col },
@@ -14364,11 +14686,11 @@ function SourceMap(options) {
             source    : source,
             name      : name
         });
-    };
+    }
     return {
         add        : add,
         get        : function() { return generator },
-        toString   : function() { return generator.toString() }
+        toString   : function() { return JSON.stringify(generator.toJSON()); }
     };
 };
 
@@ -14420,53 +14742,68 @@ function SourceMap(options) {
 (function(){
 
     var MOZ_TO_ME = {
-        TryStatement : function(M) {
+        ExpressionStatement: function(M) {
+            var expr = M.expression;
+            if (expr.type === "Literal" && typeof expr.value === "string") {
+                return new AST_Directive({
+                    start: my_start_token(M),
+                    end: my_end_token(M),
+                    value: expr.value
+                });
+            }
+            return new AST_SimpleStatement({
+                start: my_start_token(M),
+                end: my_end_token(M),
+                body: from_moz(expr)
+            });
+        },
+        TryStatement: function(M) {
+            var handlers = M.handlers || [M.handler];
+            if (handlers.length > 1 || M.guardedHandlers && M.guardedHandlers.length) {
+                throw new Error("Multiple catch clauses are not supported.");
+            }
             return new AST_Try({
                 start    : my_start_token(M),
                 end      : my_end_token(M),
                 body     : from_moz(M.block).body,
-                bcatch   : from_moz(M.handlers[0]),
+                bcatch   : from_moz(handlers[0]),
                 bfinally : M.finalizer ? new AST_Finally(from_moz(M.finalizer)) : null
             });
         },
-        CatchClause : function(M) {
-            return new AST_Catch({
-                start   : my_start_token(M),
-                end     : my_end_token(M),
-                argname : from_moz(M.param),
-                body    : from_moz(M.body).body
-            });
+        Property: function(M) {
+            var key = M.key;
+            var name = key.type == "Identifier" ? key.name : key.value;
+            var args = {
+                start    : my_start_token(key),
+                end      : my_end_token(M.value),
+                key      : name,
+                value    : from_moz(M.value)
+            };
+            switch (M.kind) {
+              case "init":
+                return new AST_ObjectKeyVal(args);
+              case "set":
+                args.value.name = from_moz(key);
+                return new AST_ObjectSetter(args);
+              case "get":
+                args.value.name = from_moz(key);
+                return new AST_ObjectGetter(args);
+            }
         },
-        ObjectExpression : function(M) {
+        ObjectExpression: function(M) {
             return new AST_Object({
                 start      : my_start_token(M),
                 end        : my_end_token(M),
                 properties : M.properties.map(function(prop){
-                    var key = prop.key;
-                    var name = key.type == "Identifier" ? key.name : key.value;
-                    var args = {
-                        start    : my_start_token(key),
-                        end      : my_end_token(prop.value),
-                        key      : name,
-                        value    : from_moz(prop.value)
-                    };
-                    switch (prop.kind) {
-                      case "init":
-                        return new AST_ObjectKeyVal(args);
-                      case "set":
-                        args.value.name = from_moz(key);
-                        return new AST_ObjectSetter(args);
-                      case "get":
-                        args.value.name = from_moz(key);
-                        return new AST_ObjectGetter(args);
-                    }
+                    prop.type = "Property";
+                    return from_moz(prop)
                 })
             });
         },
-        SequenceExpression : function(M) {
+        SequenceExpression: function(M) {
             return AST_Seq.from_array(M.expressions.map(from_moz));
         },
-        MemberExpression : function(M) {
+        MemberExpression: function(M) {
             return new (M.computed ? AST_Sub : AST_Dot)({
                 start      : my_start_token(M),
                 end        : my_end_token(M),
@@ -14474,7 +14811,7 @@ function SourceMap(options) {
                 expression : from_moz(M.object)
             });
         },
-        SwitchCase : function(M) {
+        SwitchCase: function(M) {
             return new (M.test ? AST_Case : AST_Default)({
                 start      : my_start_token(M),
                 end        : my_end_token(M),
@@ -14482,7 +14819,14 @@ function SourceMap(options) {
                 body       : M.consequent.map(from_moz)
             });
         },
-        Literal : function(M) {
+        VariableDeclaration: function(M) {
+            return new (M.kind === "const" ? AST_Const : AST_Var)({
+                start       : my_start_token(M),
+                end         : my_end_token(M),
+                definitions : M.declarations.map(from_moz)
+            });
+        },
+        Literal: function(M) {
             var val = M.value, args = {
                 start  : my_start_token(M),
                 end    : my_end_token(M)
@@ -14502,12 +14846,9 @@ function SourceMap(options) {
                 return new AST_RegExp(args);
             }
         },
-        UnaryExpression: From_Moz_Unary,
-        UpdateExpression: From_Moz_Unary,
         Identifier: function(M) {
             var p = FROM_MOZ_STACK[FROM_MOZ_STACK.length - 2];
-            return new (M.name == "this" ? AST_This
-                        : p.type == "LabeledStatement" ? AST_Label
+            return new (  p.type == "LabeledStatement" ? AST_Label
                         : p.type == "VariableDeclarator" && p.id === M ? (p.kind == "const" ? AST_SymbolConst : AST_SymbolVar)
                         : p.type == "FunctionExpression" ? (p.id === M ? AST_SymbolLambda : AST_SymbolFunarg)
                         : p.type == "FunctionDeclaration" ? (p.id === M ? AST_SymbolDefun : AST_SymbolFunarg)
@@ -14521,7 +14862,8 @@ function SourceMap(options) {
         }
     };
 
-    function From_Moz_Unary(M) {
+    MOZ_TO_ME.UpdateExpression =
+    MOZ_TO_ME.UnaryExpression = function To_Moz_Unary(M) {
         var prefix = "prefix" in M ? M.prefix
             : M.type == "UnaryExpression" ? true : false;
         return new (prefix ? AST_UnaryPrefix : AST_UnaryPostfix)({
@@ -14532,14 +14874,9 @@ function SourceMap(options) {
         });
     };
 
-    var ME_TO_MOZ = {};
-
-    map("Node", AST_Node);
     map("Program", AST_Toplevel, "body@body");
-    map("Function", AST_Function, "id>name, params@argnames, body%body");
     map("EmptyStatement", AST_EmptyStatement);
     map("BlockStatement", AST_BlockStatement, "body@body");
-    map("ExpressionStatement", AST_SimpleStatement, "expression>body");
     map("IfStatement", AST_If, "test>condition, consequent>body, alternate>alternative");
     map("LabeledStatement", AST_LabeledStatement, "label>label, body>body");
     map("BreakStatement", AST_Break, "label>label");
@@ -14554,71 +14891,261 @@ function SourceMap(options) {
     map("ForInStatement", AST_ForIn, "left>init, right>object, body>body");
     map("DebuggerStatement", AST_Debugger);
     map("FunctionDeclaration", AST_Defun, "id>name, params@argnames, body%body");
-    map("VariableDeclaration", AST_Var, "declarations@definitions");
     map("VariableDeclarator", AST_VarDef, "id>name, init>value");
+    map("CatchClause", AST_Catch, "param>argname, body%body");
 
     map("ThisExpression", AST_This);
     map("ArrayExpression", AST_Array, "elements@elements");
     map("FunctionExpression", AST_Function, "id>name, params@argnames, body%body");
     map("BinaryExpression", AST_Binary, "operator=operator, left>left, right>right");
-    map("AssignmentExpression", AST_Assign, "operator=operator, left>left, right>right");
     map("LogicalExpression", AST_Binary, "operator=operator, left>left, right>right");
+    map("AssignmentExpression", AST_Assign, "operator=operator, left>left, right>right");
     map("ConditionalExpression", AST_Conditional, "test>condition, consequent>consequent, alternate>alternative");
     map("NewExpression", AST_New, "callee>expression, arguments@args");
     map("CallExpression", AST_Call, "callee>expression, arguments@args");
 
+    def_to_moz(AST_Directive, function To_Moz_Directive(M) {
+        return {
+            type: "ExpressionStatement",
+            expression: {
+                type: "Literal",
+                value: M.value
+            }
+        };
+    });
+
+    def_to_moz(AST_SimpleStatement, function To_Moz_ExpressionStatement(M) {
+        return {
+            type: "ExpressionStatement",
+            expression: to_moz(M.body)
+        };
+    });
+
+    def_to_moz(AST_SwitchBranch, function To_Moz_SwitchCase(M) {
+        return {
+            type: "SwitchCase",
+            test: to_moz(M.expression),
+            consequent: M.body.map(to_moz)
+        };
+    });
+
+    def_to_moz(AST_Try, function To_Moz_TryStatement(M) {
+        return {
+            type: "TryStatement",
+            block: to_moz_block(M),
+            handler: to_moz(M.bcatch),
+            guardedHandlers: [],
+            finalizer: to_moz(M.bfinally)
+        };
+    });
+
+    def_to_moz(AST_Catch, function To_Moz_CatchClause(M) {
+        return {
+            type: "CatchClause",
+            param: to_moz(M.argname),
+            guard: null,
+            body: to_moz_block(M)
+        };
+    });
+
+    def_to_moz(AST_Definitions, function To_Moz_VariableDeclaration(M) {
+        return {
+            type: "VariableDeclaration",
+            kind: M instanceof AST_Const ? "const" : "var",
+            declarations: M.definitions.map(to_moz)
+        };
+    });
+
+    def_to_moz(AST_Seq, function To_Moz_SequenceExpression(M) {
+        return {
+            type: "SequenceExpression",
+            expressions: M.to_array().map(to_moz)
+        };
+    });
+
+    def_to_moz(AST_PropAccess, function To_Moz_MemberExpression(M) {
+        var isComputed = M instanceof AST_Sub;
+        return {
+            type: "MemberExpression",
+            object: to_moz(M.expression),
+            computed: isComputed,
+            property: isComputed ? to_moz(M.property) : {type: "Identifier", name: M.property}
+        };
+    });
+
+    def_to_moz(AST_Unary, function To_Moz_Unary(M) {
+        return {
+            type: M.operator == "++" || M.operator == "--" ? "UpdateExpression" : "UnaryExpression",
+            operator: M.operator,
+            prefix: M instanceof AST_UnaryPrefix,
+            argument: to_moz(M.expression)
+        };
+    });
+
+    def_to_moz(AST_Binary, function To_Moz_BinaryExpression(M) {
+        return {
+            type: M.operator == "&&" || M.operator == "||" ? "LogicalExpression" : "BinaryExpression",
+            left: to_moz(M.left),
+            operator: M.operator,
+            right: to_moz(M.right)
+        };
+    });
+
+    def_to_moz(AST_Object, function To_Moz_ObjectExpression(M) {
+        return {
+            type: "ObjectExpression",
+            properties: M.properties.map(to_moz)
+        };
+    });
+
+    def_to_moz(AST_ObjectProperty, function To_Moz_Property(M) {
+        var key = (
+            is_identifier(M.key)
+            ? {type: "Identifier", name: M.key}
+            : {type: "Literal", value: M.key}
+        );
+        var kind;
+        if (M instanceof AST_ObjectKeyVal) {
+            kind = "init";
+        } else
+        if (M instanceof AST_ObjectGetter) {
+            kind = "get";
+        } else
+        if (M instanceof AST_ObjectSetter) {
+            kind = "set";
+        }
+        return {
+            type: "Property",
+            kind: kind,
+            key: key,
+            value: to_moz(M.value)
+        };
+    });
+
+    def_to_moz(AST_Symbol, function To_Moz_Identifier(M) {
+        var def = M.definition();
+        return {
+            type: "Identifier",
+            name: def ? def.mangled_name || def.name : M.name
+        };
+    });
+
+    def_to_moz(AST_Constant, function To_Moz_Literal(M) {
+        var value = M.value;
+        if (typeof value === 'number' && (value < 0 || (value === 0 && 1 / value < 0))) {
+            return {
+                type: "UnaryExpression",
+                operator: "-",
+                prefix: true,
+                argument: {
+                    type: "Literal",
+                    value: -value
+                }
+            };
+        }
+        return {
+            type: "Literal",
+            value: value
+        };
+    });
+
+    def_to_moz(AST_Atom, function To_Moz_Atom(M) {
+        return {
+            type: "Identifier",
+            name: String(M.value)
+        };
+    });
+
+    AST_Boolean.DEFMETHOD("to_mozilla_ast", AST_Constant.prototype.to_mozilla_ast);
+    AST_Null.DEFMETHOD("to_mozilla_ast", AST_Constant.prototype.to_mozilla_ast);
+    AST_Hole.DEFMETHOD("to_mozilla_ast", function To_Moz_ArrayHole() { return null });
+
+    AST_Block.DEFMETHOD("to_mozilla_ast", AST_BlockStatement.prototype.to_mozilla_ast);
+    AST_Lambda.DEFMETHOD("to_mozilla_ast", AST_Function.prototype.to_mozilla_ast);
+
     /* -----[ tools ]----- */
 
     function my_start_token(moznode) {
+        var loc = moznode.loc, start = loc && loc.start;
+        var range = moznode.range;
         return new AST_Token({
-            file   : moznode.loc && moznode.loc.source,
-            line   : moznode.loc && moznode.loc.start.line,
-            col    : moznode.loc && moznode.loc.start.column,
-            pos    : moznode.start,
-            endpos : moznode.start
+            file    : loc && loc.source,
+            line    : start && start.line,
+            col     : start && start.column,
+            pos     : range ? range[0] : moznode.start,
+            endline : start && start.line,
+            endcol  : start && start.column,
+            endpos  : range ? range[0] : moznode.start
         });
     };
 
     function my_end_token(moznode) {
+        var loc = moznode.loc, end = loc && loc.end;
+        var range = moznode.range;
         return new AST_Token({
-            file   : moznode.loc && moznode.loc.source,
-            line   : moznode.loc && moznode.loc.end.line,
-            col    : moznode.loc && moznode.loc.end.column,
-            pos    : moznode.end,
-            endpos : moznode.end
+            file    : loc && loc.source,
+            line    : end && end.line,
+            col     : end && end.column,
+            pos     : range ? range[1] : moznode.end,
+            endline : end && end.line,
+            endcol  : end && end.column,
+            endpos  : range ? range[1] : moznode.end
         });
     };
 
     function map(moztype, mytype, propmap) {
         var moz_to_me = "function From_Moz_" + moztype + "(M){\n";
-        moz_to_me += "return new mytype({\n" +
+        moz_to_me += "return new " + mytype.name + "({\n" +
             "start: my_start_token(M),\n" +
             "end: my_end_token(M)";
+
+        var me_to_moz = "function To_Moz_" + moztype + "(M){\n";
+        me_to_moz += "return {\n" +
+            "type: " + JSON.stringify(moztype);
 
         if (propmap) propmap.split(/\s*,\s*/).forEach(function(prop){
             var m = /([a-z0-9$_]+)(=|@|>|%)([a-z0-9$_]+)/i.exec(prop);
             if (!m) throw new Error("Can't understand property map: " + prop);
-            var moz = "M." + m[1], how = m[2], my = m[3];
+            var moz = m[1], how = m[2], my = m[3];
             moz_to_me += ",\n" + my + ": ";
-            if (how == "@") {
-                moz_to_me += moz + ".map(from_moz)";
-            } else if (how == ">") {
-                moz_to_me += "from_moz(" + moz + ")";
-            } else if (how == "=") {
-                moz_to_me += moz;
-            } else if (how == "%") {
-                moz_to_me += "from_moz(" + moz + ").body";
-            } else throw new Error("Can't understand operator in propmap: " + prop);
+            me_to_moz += ",\n" + moz + ": ";
+            switch (how) {
+                case "@":
+                    moz_to_me += "M." + moz + ".map(from_moz)";
+                    me_to_moz += "M." +  my + ".map(to_moz)";
+                    break;
+                case ">":
+                    moz_to_me += "from_moz(M." + moz + ")";
+                    me_to_moz += "to_moz(M." + my + ")";
+                    break;
+                case "=":
+                    moz_to_me += "M." + moz;
+                    me_to_moz += "M." + my;
+                    break;
+                case "%":
+                    moz_to_me += "from_moz(M." + moz + ").body";
+                    me_to_moz += "to_moz_block(M)";
+                    break;
+                default:
+                    throw new Error("Can't understand operator in propmap: " + prop);
+            }
         });
-        moz_to_me += "\n})}";
 
-        // moz_to_me = parse(moz_to_me).print_to_string({ beautify: true });
-        // console.log(moz_to_me);
+        moz_to_me += "\n})\n}";
+        me_to_moz += "\n}\n}";
 
-        moz_to_me = new Function("mytype", "my_start_token", "my_end_token", "from_moz", "return(" + moz_to_me + ")")(
-            mytype, my_start_token, my_end_token, from_moz
+        //moz_to_me = parse(moz_to_me).print_to_string({ beautify: true });
+        //me_to_moz = parse(me_to_moz).print_to_string({ beautify: true });
+        //console.log(moz_to_me);
+
+        moz_to_me = new Function("my_start_token", "my_end_token", "from_moz", "return(" + moz_to_me + ")")(
+            my_start_token, my_end_token, from_moz
         );
-        return MOZ_TO_ME[moztype] = moz_to_me;
+        me_to_moz = new Function("to_moz", "to_moz_block", "return(" + me_to_moz + ")")(
+            to_moz, to_moz_block
+        );
+        MOZ_TO_ME[moztype] = moz_to_me;
+        def_to_moz(mytype, me_to_moz);
     };
 
     var FROM_MOZ_STACK = null;
@@ -14638,7 +15165,255 @@ function SourceMap(options) {
         return ast;
     };
 
+    function set_moz_loc(mynode, moznode, myparent) {
+        var start = mynode.start;
+        var end = mynode.end;
+        if (start.pos != null && end.endpos != null) {
+            moznode.range = [start.pos, end.endpos];
+        }
+        if (start.line) {
+            moznode.loc = {
+                start: {line: start.line, column: start.col},
+                end: end.endline ? {line: end.endline, column: end.endcol} : null
+            };
+            if (start.file) {
+                moznode.loc.source = start.file;
+            }
+        }
+        return moznode;
+    };
+
+    function def_to_moz(mytype, handler) {
+        mytype.DEFMETHOD("to_mozilla_ast", function() {
+            return set_moz_loc(this, handler(this));
+        });
+    };
+
+    function to_moz(node) {
+        return node != null ? node.to_mozilla_ast() : null;
+    };
+
+    function to_moz_block(node) {
+        return {
+            type: "BlockStatement",
+            body: node.body.map(to_moz)
+        };
+    };
+
 })();
+
+/***********************************************************************
+
+  A JavaScript tokenizer / parser / beautifier / compressor.
+  https://github.com/mishoo/UglifyJS2
+
+  -------------------------------- (C) ---------------------------------
+
+                           Author: Mihai Bazon
+                         <mihai.bazon@gmail.com>
+                       http://mihai.bazon.net/blog
+
+  Distributed under the BSD license:
+
+    Copyright 2012 (c) Mihai Bazon <mihai.bazon@gmail.com>
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+
+        * Redistributions of source code must retain the above
+          copyright notice, this list of conditions and the following
+          disclaimer.
+
+        * Redistributions in binary form must reproduce the above
+          copyright notice, this list of conditions and the following
+          disclaimer in the documentation and/or other materials
+          provided with the distribution.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER “AS IS” AND ANY
+    EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+    TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+    THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+    SUCH DAMAGE.
+
+ ***********************************************************************/
+
+"use strict";
+
+function find_builtins() {
+    var a = [];
+    [ Object, Array, Function, Number,
+      String, Boolean, Error, Math,
+      Date, RegExp
+    ].forEach(function(ctor){
+        Object.getOwnPropertyNames(ctor).map(add);
+        if (ctor.prototype) {
+            Object.getOwnPropertyNames(ctor.prototype).map(add);
+        }
+    });
+    function add(name) {
+        push_uniq(a, name);
+    }
+    return a;
+}
+
+function mangle_properties(ast, options) {
+    options = defaults(options, {
+        reserved : null,
+        cache : null
+    });
+
+    var reserved = options.reserved;
+    if (reserved == null)
+        reserved = find_builtins();
+
+    var cache = options.cache;
+    if (cache == null) {
+        cache = {
+            cname: -1,
+            props: new Dictionary()
+        };
+    }
+
+    var names_to_mangle = [];
+
+    // step 1: find candidates to mangle
+    ast.walk(new TreeWalker(function(node){
+        if (node instanceof AST_ObjectKeyVal) {
+            add(node.key);
+        }
+        else if (node instanceof AST_ObjectProperty) {
+            // setter or getter, since KeyVal is handled above
+            add(node.key.name);
+        }
+        else if (node instanceof AST_Dot) {
+            if (this.parent() instanceof AST_Assign) {
+                add(node.property);
+            }
+        }
+        else if (node instanceof AST_Sub) {
+            if (this.parent() instanceof AST_Assign) {
+                addStrings(node.property);
+            }
+        }
+    }));
+
+    // step 2: transform the tree, renaming properties
+    return ast.transform(new TreeTransformer(null, function(node){
+        if (node instanceof AST_ObjectKeyVal) {
+            if (should_mangle(node.key)) {
+                node.key = mangle(node.key);
+            }
+        }
+        else if (node instanceof AST_ObjectProperty) {
+            // setter or getter
+            if (should_mangle(node.key.name)) {
+                node.key.name = mangle(node.key.name);
+            }
+        }
+        else if (node instanceof AST_Dot) {
+            if (should_mangle(node.property)) {
+                node.property = mangle(node.property);
+            }
+        }
+        else if (node instanceof AST_Sub) {
+            node.property = mangleStrings(node.property);
+        }
+        // else if (node instanceof AST_String) {
+        //     if (should_mangle(node.value)) {
+        //         AST_Node.warn(
+        //             "Found \"{prop}\" property candidate for mangling in an arbitrary string [{file}:{line},{col}]", {
+        //                 file : node.start.file,
+        //                 line : node.start.line,
+        //                 col  : node.start.col,
+        //                 prop : node.value
+        //             }
+        //         );
+        //     }
+        // }
+    }));
+
+    // only function declarations after this line
+
+    function can_mangle(name) {
+        if (reserved.indexOf(name) >= 0) return false;
+        if (/^[0-9.]+$/.test(name)) return false;
+        return true;
+    }
+
+    function should_mangle(name) {
+        return cache.props.has(name)
+            || names_to_mangle.indexOf(name) >= 0;
+    }
+
+    function add(name) {
+        if (can_mangle(name))
+            push_uniq(names_to_mangle, name);
+    }
+
+    function mangle(name) {
+        var mangled = cache.props.get(name);
+        if (!mangled) {
+            do {
+                mangled = base54(++cache.cname);
+            } while (!can_mangle(mangled));
+            cache.props.set(name, mangled);
+        }
+        return mangled;
+    }
+
+    function addStrings(node) {
+        var out = {};
+        try {
+            (function walk(node){
+                node.walk(new TreeWalker(function(node){
+                    if (node instanceof AST_Seq) {
+                        walk(node.cdr);
+                        return true;
+                    }
+                    if (node instanceof AST_String) {
+                        add(node.value);
+                        return true;
+                    }
+                    if (node instanceof AST_Conditional) {
+                        walk(node.consequent);
+                        walk(node.alternative);
+                        return true;
+                    }
+                    throw out;
+                }));
+            })(node);
+        } catch(ex) {
+            if (ex !== out) throw ex;
+        }
+    }
+
+    function mangleStrings(node) {
+        return node.transform(new TreeTransformer(function(node){
+            if (node instanceof AST_Seq) {
+                node.cdr = mangleStrings(node.cdr);
+            }
+            else if (node instanceof AST_String) {
+                if (should_mangle(node.value)) {
+                    node.value = mangle(node.value);
+                }
+            }
+            else if (node instanceof AST_Conditional) {
+                node.consequent = mangleStrings(node.consequent);
+                node.alternative = mangleStrings(node.alternative);
+            }
+            return node;
+        }));
+    }
+
+}
 
 
 exports.sys = sys;
@@ -14771,6 +15546,7 @@ exports.UNICODE = UNICODE;
 exports.is_letter = is_letter;
 exports.is_digit = is_digit;
 exports.is_alphanumeric_char = is_alphanumeric_char;
+exports.is_unicode_digit = is_unicode_digit;
 exports.is_unicode_combining_mark = is_unicode_combining_mark;
 exports.is_unicode_connector_punctuation = is_unicode_connector_punctuation;
 exports.is_identifier = is_identifier;
@@ -14796,6 +15572,8 @@ exports.base54 = base54;
 exports.OutputStream = OutputStream;
 exports.Compressor = Compressor;
 exports.SourceMap = SourceMap;
+exports.find_builtins = find_builtins;
+exports.mangle_properties = mangle_properties;
 
 exports.AST_Node.warn_function = function (txt) { if (typeof console != "undefined" && typeof console.warn === "function") console.warn(txt) }
 
@@ -14845,8 +15623,8 @@ exports.minify = function (files, options) {
 
     // 3. mangle
     if (options.mangle) {
-        toplevel.figure_out_scope();
-        toplevel.compute_char_frequency();
+        toplevel.figure_out_scope(options.mangle);
+        toplevel.compute_char_frequency(options.mangle);
         toplevel.mangle_names(options.mangle);
     }
 
@@ -14865,7 +15643,7 @@ exports.minify = function (files, options) {
         if (options.sourceMapIncludeSources) {
             for (var file in sourcesContent) {
                 if (sourcesContent.hasOwnProperty(file)) {
-                    options.source_map.get().setSourceContent(file, sourcesContent[file]);
+                    output.source_map.get().setSourceContent(file, sourcesContent[file]);
                 }
             }
         }
@@ -14876,9 +15654,19 @@ exports.minify = function (files, options) {
     }
     var stream = UglifyJS.OutputStream(output);
     toplevel.print(stream);
+
+    if(options.outSourceMap){
+        stream += "\n//# sourceMappingURL=" + options.outSourceMap;
+    }
+
+    var source_map = output.source_map;
+    if (source_map) {
+        source_map = source_map + "";
+    }
+
     return {
         code : stream + "",
-        map  : output.source_map + ""
+        map  : source_map
     };
 };
 
@@ -14916,10 +15704,10 @@ exports.describe_ast = function () {
     doitem(UglifyJS.AST_Node);
     return out + "";
 };
-},{"source-map":35,"util":32}],46:[function(_dereq_,module,exports){
+},{"source-map":35,"util":32}],46:[function(require,module,exports){
 'use strict';
 
-var uglify = _dereq_('uglify-js')
+var uglify = require('uglify-js')
 
 module.exports = addWith
 
@@ -14965,7 +15753,7 @@ function addWith(obj, src, exclude) {
 
   src = '(function (' + vars.join(', ') + ') {' +
     src +
-    '}(' + inputVars.join(',') + '))'
+    '}.call(this' + inputVars.map(function (v) { return ',' + v; }).join('') + '))'
 
   return ';' + declareLocal + ';' + unwrapReturns(src, result) + ';'
 }
@@ -14996,12 +15784,17 @@ function unwrapReturns(src, result) {
   var originalSource = src
   var hasReturn = false
   var ast = uglify.parse(src)
+  var ref
   src = src.split('')
 
-  if (ast.body.length !== 1 || ast.body[0].TYPE !== 'SimpleStatement' ||
-      ast.body[0].body.TYPE !== 'Call' || ast.body[0].body.expression.TYPE !== 'Function')
+  // get a reference to the function that was inserted to add an inner context
+  if ((ref = ast.body).length !== 1
+   || (ref = ref[0]).TYPE !== 'SimpleStatement'
+   || (ref = ref.body).TYPE !== 'Call'
+   || (ref = ref.expression).TYPE !== 'Dot' || ref.property !== 'call'
+   || (ref = ref.expression).TYPE !== 'Function')
     throw new Error('AST does not seem to represent a self-calling function')
-  var fn = ast.body[0].body.expression
+  var fn = ref
 
   var walker = new uglify.TreeWalker(visitor)
   function visitor(node, descend) {
@@ -15029,6 +15822,5 @@ function unwrapReturns(src, result) {
   else return 'var ' + result + '=' + src.join('') + ';if (' + result + ') return ' + result + '.value'
 }
 
-},{"uglify-js":45}]},{},[5])
-(5)
+},{"uglify-js":45}]},{},[5])(5)
 });
